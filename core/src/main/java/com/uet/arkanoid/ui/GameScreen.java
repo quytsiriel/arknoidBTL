@@ -30,6 +30,7 @@ public class GameScreen {
     private Ball ball;
     private float launchTextTimer = 0f;
     private boolean paused;
+    private GameOverScreen gameOverScreen;
 
     public GameScreen(Main game) {
         this.game = game;
@@ -108,7 +109,17 @@ public class GameScreen {
 
         // (Kiểm tra game over)
         if (livesSystem.getCurrentLives() <= 0) {
-            // game.returnToMenu();
+            // Lấy điểm số cuối cùng
+            String finalScore = scoreSystem.getFormattedHighScore(); // (Giả sử hàm lấy điểm là getScore())
+
+            // Yêu cầu 'Main' chuyển sang màn hình GameOver
+            game.showGameOver(scoreSystem.getCurrentScore());
+
+            // Dừng thực thi hàm render() của GameScreen
+            return;
+        }
+        if (brickManager.isAllCleared()){
+            game.showGameOver(scoreSystem.getCurrentScore());
         }
     }
 

@@ -65,6 +65,7 @@ public class Main extends Game {
                 pauseScreen.render();
                 break;
             case GAME_OVER:
+                gameOverScreen.render();
                 break;
         }
     }
