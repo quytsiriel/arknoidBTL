@@ -16,7 +16,7 @@ public class Ball {
     private boolean active;        // Trạng thái hoạt động
     private Rectangle bounds;      // Hình chữ nhật bao quanh (cho collision)
 
-    // Constructor với texture
+    // Constructor
     public Ball(float x, float y, float radius, float speed, Texture texture) {
         this.position = new Vector2(x, y);
         this.velocity = new Vector2(0, 0);
@@ -29,7 +29,7 @@ public class Ball {
         this.bounds = new Rectangle(x - radius, y - radius, width, height);
     }
 
-    // Constructor với đường dẫn texture
+    // Constructor (để thêm ảnh quả bóng)
     public Ball(float x, float y, float radius, float speed, String texturePath) {
         this(x, y, radius, speed, new Texture(texturePath));
     }
