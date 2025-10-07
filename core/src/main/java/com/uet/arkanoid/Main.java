@@ -11,22 +11,31 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class Main extends ApplicationAdapter {
 
     public Texture background;
-
+    BrickManager brickManager;
     public SpriteBatch batch;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("background.png"));
+        brickManager = new BrickManager("Level1.tmx");
     }
 
     @Override
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
+        ball.update(delta);
+
+        //Hàm check va chạm - truyền class ball vào
+        brickManager.checkCollision(ball);
+
+
         batch.begin();
         batch.draw(background,0,0);
+        brickManager.render(batch);
         batch.end();
-
     }
 
     @Override
