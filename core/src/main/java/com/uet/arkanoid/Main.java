@@ -18,6 +18,7 @@ public class Main extends ApplicationAdapter {
     private BrickManager brickManager;
     private Ball ball;
     private Paddle paddle;
+    private PaddleCollision paddleCollision;
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
 
@@ -34,6 +35,9 @@ public class Main extends ApplicationAdapter {
             (Gdx.graphics.getWidth() - 128) / 2f,
             50
         );
+
+        // Khởi tạo đối tượng xử lý va chạm
+        paddleCollision = new PaddleCollision();
 
         // Score & Lives
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
@@ -52,7 +56,7 @@ public class Main extends ApplicationAdapter {
         float startX = Gdx.graphics.getWidth() / 2f;
         float startY = paddle.getY() + 20;
         ball = new Ball(startX, startY, 10, 300, ballTexture);
-        ball.launch(60); // bắn lên 60 độ
+        ball.launch(90); // bắn lên 60 độ
     }
 
     @Override
@@ -66,7 +70,9 @@ public class Main extends ApplicationAdapter {
         // update logic
         paddle.update(delta);
         ball.update(delta);
+
         brickManager.checkCollision(ball);
+        paddleCollision.checkCollision(paddle, ball); // <--- THÊM DÒNG NÀY
         checkWallCollision();
 
         scoreSystem.update(delta);
