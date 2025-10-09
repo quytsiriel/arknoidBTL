@@ -41,8 +41,8 @@ public class BrickManager {
                 if (cell != null && cell.getTile() != null) {
                     int tileID = cell.getTile().getId();
 
-                    int type = (tileID) % BrickTextures.length;
-                    int hit = type ;
+                    int type = (tileID - 1) % BrickTextures.length;
+                    int hit = type - 1 ;
 
                     Texture tex = BrickTextures[type];
                     int px = x * tileWidth;
@@ -71,9 +71,5 @@ public class BrickManager {
                 break; // tránh xử lý trùng
             }
         }
-    }
-
-    public void dispose() {
-
     }
 }
