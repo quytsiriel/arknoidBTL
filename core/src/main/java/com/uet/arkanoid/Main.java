@@ -4,29 +4,22 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.ScreenUtils;
 
-
-/**
- * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
- */
 public class Main extends ApplicationAdapter {
 
-    public Texture background;
-    public BitmapFont font;
-    BrickManager brickManager;
-    public SpriteBatch batch;
+    private Texture background;
+    private SpriteBatch batch;
+    private BitmapFont font;
 
-
-    //Paddle
+    private BrickManager brickManager;
+    private Ball ball;
     private Paddle paddle;
-    // ScoreSystem && Lives
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
-
 
     private int score = 0;
     private int lives = 3;
@@ -36,61 +29,76 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("background.png"));
 
-
+        // Paddle
         paddle = new Paddle(
-            (Gdx.graphics.getWidth() - 128) / 2f,  // căn giữa theo chiều ngang
-            50                                     // cách đáy 50px
+            (Gdx.graphics.getWidth() - 128) / 2f,
+            50
         );
 
+        // Score & Lives
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
         livesSystem = new Lives(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 70);
 
-        // khởi tạo font
+        // Font
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(2);
-        background = new Texture(Gdx.files.internal("background.png"));
+
+        // Gạch
         brickManager = new BrickManager("Level1.tmx");
+
+        // ✅ Bóng
+        Texture ballTexture = new Texture(Gdx.files.internal("ball.png"));
+        float startX = Gdx.graphics.getWidth() / 2f;
+        float startY = paddle.getY() + 20;
+        ball = new Ball(startX, startY, 10, 300, ballTexture);
+        ball.launch(60); // bắn lên 60 độ
     }
 
     @Override
     public void render() {
-        // screen clear
+        // clear màn hình
         ScreenUtils.clear(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //update
         float delta = Gdx.graphics.getDeltaTime();
 
-        // update paddle
+        // update logic
         paddle.update(delta);
+        ball.update(delta);
+        brickManager.checkCollision(ball);
+        checkWallCollision();
 
-        // update score, lives
         scoreSystem.update(delta);
         livesSystem.update(delta);
 
-
+        // render
         batch.begin();
         batch.draw(background, 0, 0);
 
-        // vẽ paddle
         paddle.render(batch);
-
-        // vẽ điểm, vẽ mạng sống
+        brickManager.render(batch);
+        ball.render(batch);
         scoreSystem.render(batch);
         livesSystem.render(batch);
 
-
-        ball.update(delta);
-
-        //Hàm check va chạm - truyền class ball vào
-        brickManager.checkCollision(ball);
-
-
-        batch.begin();
-        batch.draw(background,0,0);
-        brickManager.render(batch);
         batch.end();
+    }
+
+    private void checkWallCollision() {
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
+        if (ball.getX() - ball.getRadius() <= 0 || ball.getX() + ball.getRadius() >= screenWidth)
+            ball.reverseX();
+
+        if (ball.getY() + ball.getRadius() >= screenHeight)
+            ball.reverseY();
+
+        if (ball.getY() < -ball.getRadius()) {
+            ball.reset(screenWidth / 2f, paddle.getY() + 20);
+            ball.launch(60);
+        }
     }
 
     @Override
@@ -98,10 +106,6 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         background.dispose();
         font.dispose();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
+        ball.dispose();
     }
 }

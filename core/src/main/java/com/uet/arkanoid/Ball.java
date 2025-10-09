@@ -7,14 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Ball {
     private Vector2 position;      // Vị trí của bóng
-    private Vector2 velocity;      // Vận tốc của bóng
+    public Vector2 velocity;      // Vận tốc của bóng
     private float radius;          // Bán kính của bóng (cho logic game)
     private Texture texture;       // Texture hình ảnh
     private float width;           // Chiều rộng hiển thị
     private float height;          // Chiều cao hiển thị
     private float speed;           // Tốc độ cơ bản
     private boolean active;        // Trạng thái hoạt động
-    private Rectangle bounds;      // Hình chữ nhật bao quanh (cho collision)
+    public Rectangle bounds;      // Hình chữ nhật bao quanh (cho collision)
 
     // Constructor
     public Ball(float x, float y, float radius, float speed, Texture texture) {

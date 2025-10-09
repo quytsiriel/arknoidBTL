@@ -31,11 +31,6 @@ public class BrickManager {
         if (layer == null)
             layer = (TiledMapTileLayer) map.getLayers().get("bricks");
 
-        if (layer == null) {
-            System.out.println("❌ Không tìm thấy layer 'Bricks' trong Level1.tmx!");
-            return;
-        }
-
         int tileWidth = (int) layer.getTileWidth();
         int tileHeight = (int) layer.getTileHeight();
 
@@ -46,8 +41,8 @@ public class BrickManager {
                 if (cell != null && cell.getTile() != null) {
                     int tileID = cell.getTile().getId();
 
-                    int type = (tileID - 1) % BrickTextures.length;
-                    int hit = type + 1;
+                    int type = (tileID) % BrickTextures.length;
+                    int hit = type ;
 
                     Texture tex = BrickTextures[type];
                     int px = x * tileWidth;
@@ -76,5 +71,9 @@ public class BrickManager {
                 break; // tránh xử lý trùng
             }
         }
+    }
+
+    public void dispose() {
+
     }
 }
