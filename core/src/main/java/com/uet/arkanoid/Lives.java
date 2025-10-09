@@ -30,6 +30,7 @@ public class Lives implements Disposable {
     private float loseLifeTimer = 0f;
     private final float LOSE_LIFE_ANIMATION_TIME = 0.5f;
     private boolean isAnimatingLoss = false;
+    private int animatingHeartIndex = -1;
 
     /**
      * Constructor khởi tạo với số mạng mặc định
@@ -81,6 +82,7 @@ public class Lives implements Disposable {
             if (loseLifeTimer >= LOSE_LIFE_ANIMATION_TIME) {
                 isAnimatingLoss = false;
                 loseLifeTimer = 0f;
+                animatingHeartIndex = -1;
             }
         }
     }
@@ -89,22 +91,40 @@ public class Lives implements Disposable {
      * Hiển thị mạng sống
      */
     public void render(SpriteBatch batch) {
+        // Vẽ các tim còn sống
         for (int i = 0; i < currentLives; i++) {
             float x = position.x + (i * heartSpacing);
             float y = position.y;
-
-            if (isAnimatingLoss && i == currentLives) {
-                float shake = (float) Math.sin(loseLifeTimer * 50) * 3;
-                x += shake;
-            }
-
+            batch.setColor(1, 1, 1, 1);
             batch.draw(heartTexture, x, y, heartSize, heartSize);
         }
 
+        // Hiệu ứng tim mất dần
+        if (isAnimatingLoss && animatingHeartIndex >= 0) {
+            float progress = loseLifeTimer / LOSE_LIFE_ANIMATION_TIME;
+            if (progress > 1f) progress = 1f;
+
+            float alpha = 1f - progress; // mờ dần
+            float scale = 1f + progress * 0.5f; // nổ nhẹ
+            float x = position.x + (animatingHeartIndex * heartSpacing);
+            float y = position.y;
+            float offset = (heartSize * (scale - 1f)) / 2f;
+
+            batch.setColor(1, 1, 1, alpha);
+            batch.draw(heartTexture,
+                x - offset, y - offset,
+                heartSize * scale, heartSize * scale);
+        }
+
+        // Reset màu để không ảnh hưởng phần khác
+        batch.setColor(1, 1, 1, 1f);
+
+        // Vẽ chữ hiển thị số mạng
         font.draw(batch, "x" + currentLives,
             position.x + (maxLives * heartSpacing) + 10,
             position.y + heartSize / 2 + 8);
     }
+
 
     /**
      * Vẽ đơn giản bằng ShapeRenderer (debug)
@@ -125,8 +145,9 @@ public class Lives implements Disposable {
      */
     public boolean loseLife() {
         if (currentLives > 0) {
-            currentLives--;
-            isAnimatingLoss = true;
+            animatingHeartIndex = currentLives - 1;  // ← Lưu index trái tim bị mất
+            currentLives--;                           // ← Trừ mạng
+            isAnimatingLoss = true;                   // ← Bật animation
             loseLifeTimer = 0f;
             return currentLives > 0;
         }

@@ -171,6 +171,31 @@ public class Ball {
             position.y < -radius || position.y > screenHeight + radius;
     }
 
+    // Kiem tra bong ra khoi canh duoi
+    public boolean isFallenOffScreen(float screenHeight) {
+        return position.y < -radius;
+    }
+
+    // Kiem tra bong roi = mat mang
+    public boolean checkAndHandleLostLife(float screenWidth, float screenHeight,
+                                          Lives lives, float resetX, float resetY) {
+        // Chỉ kiểm tra khi bóng rơi xuống dưới màn hình
+        if (position.y < -radius && active) {
+            active = false;
+            boolean stillAlive = lives.loseLife();
+
+            if (stillAlive) {
+                // Reset bóng về vị trí ban đầu để chơi tiếp
+                reset(resetX, resetY);
+                return true;
+            } else {
+                // Game Over
+                return false;
+            }
+        }
+        return true; // Bóng vẫn đang chơi bình thường
+    }
+
     // Giải phóng tài nguyên
     public void dispose() {
         if (texture != null) {

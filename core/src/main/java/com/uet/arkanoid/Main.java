@@ -96,8 +96,17 @@ public class Main extends ApplicationAdapter {
             ball.reverseY();
 
         if (ball.getY() < -ball.getRadius()) {
-            ball.reset(screenWidth / 2f, paddle.getY() + 20);
-            ball.launch(60);
+            boolean stillAlive = livesSystem.loseLife();
+
+            if (stillAlive) {
+                // Reset bóng về vị trí ban đầu
+                ball.reset(screenWidth / 2f, paddle.getY() + 20);
+                ball.launch(60);
+            } else {
+                // Game Over
+                System.out.println("GAME OVER");
+                // Anh có thể chuyển sang màn hình GameOver ở đây nếu muốn
+            }
         }
     }
 
