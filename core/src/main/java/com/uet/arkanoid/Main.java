@@ -17,6 +17,7 @@ public class Main extends ApplicationAdapter {
 
     public Texture background;
     public BitmapFont font;
+    BrickManager brickManager;
     public SpriteBatch batch;
 
 
@@ -33,7 +34,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        background = new Texture(Gdx.files.internal("background_1.png"));
+        background = new Texture(Gdx.files.internal("background.png"));
 
 
         paddle = new Paddle(
@@ -48,6 +49,8 @@ public class Main extends ApplicationAdapter {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(2);
+        background = new Texture(Gdx.files.internal("background.png"));
+        brickManager = new BrickManager("Level1.tmx");
     }
 
     @Override
@@ -77,8 +80,17 @@ public class Main extends ApplicationAdapter {
         scoreSystem.render(batch);
         livesSystem.render(batch);
 
-        batch.end();
 
+        ball.update(delta);
+
+        //Hàm check va chạm - truyền class ball vào
+        brickManager.checkCollision(ball);
+
+
+        batch.begin();
+        batch.draw(background,0,0);
+        brickManager.render(batch);
+        batch.end();
     }
 
     @Override
