@@ -6,13 +6,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Ball {
-    private Vector2 position;      // Vị trí của bóng
+    public Vector2 position;      // Vị trí của bóng
     public Vector2 velocity;      // Vận tốc của bóng
-    private float radius;          // Bán kính của bóng (cho logic game)
+    public float radius;          // Bán kính của bóng (cho logic game)
     private Texture texture;       // Texture hình ảnh
     private float width;           // Chiều rộng hiển thị
     private float height;          // Chiều cao hiển thị
-    private float speed;           // Tốc độ cơ bản
+    public float speed;           // Tốc độ cơ bản
     private boolean active;        // Trạng thái hoạt động
     public Rectangle bounds;      // Hình chữ nhật bao quanh (cho collision)
 
@@ -76,6 +76,15 @@ public class Ball {
     // Đảo chiều theo trục Y (va chạm tường trên/dưới)
     public void reverseY() {
         velocity.y = -velocity.y;
+    }
+
+    public void Nay(Brick brick) {
+        if (position.y > brick.getY() + 30f || position.y  < brick.getY()) {
+            velocity.y *= -1;
+        }
+        else if(position.x <= brick.getX() || position.x  >= brick.getX() + 80f) {
+            velocity.x *= -1;
+        }
     }
 
     // Reset bóng về vị trí ban đầu

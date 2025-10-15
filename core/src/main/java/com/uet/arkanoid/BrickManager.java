@@ -12,6 +12,7 @@ public class BrickManager {
 
     public ArrayList<Brick> bricks;
     private Texture[] BrickTextures;
+    private boolean allCleared = false;
 
     public BrickManager(String mapPath) {
         bricks = new ArrayList<>();
@@ -23,6 +24,8 @@ public class BrickManager {
             new Texture("Brick2.png"),
             new Texture("Brick3.png")
         };
+
+        Brick.setAllTextures(BrickTextures);
 
         // Load bản đồ từ Tiled (.tmx)
         TiledMap map = new TmxMapLoader().load(mapPath);
@@ -42,7 +45,7 @@ public class BrickManager {
                     int tileID = cell.getTile().getId();
 
                     int type = (tileID - 1) % BrickTextures.length;
-                    int hit = type - 1 ;
+                    int hit = type ;
 
                     Texture tex = BrickTextures[type];
                     int px = x * tileWidth;
@@ -59,17 +62,34 @@ public class BrickManager {
             b.render(batch);
         }
     }
+    public boolean isAllCleared() {
+        for (Brick b : bricks) {
+            if (!b.isDeleted()) return false;
+        }
+        return true;
+    }
 
-    public void checkCollision(Ball ball) {
+    public int checkCollision(Ball ball) {
         for (Brick brick : bricks) {
             if (!brick.isDeleted() && brick.getBrickRectangle().overlaps(ball.bounds)) {
                 // Gạch bị trúng
                 brick.destroy();
-
                 // Nảy lại bóng
-                ball.velocity.y *= -1;
-                break; // tránh xử lý trùng
+                ball.Nay(brick);
+                if (isAllCleared()) {
+                    allCleared = true;
+                }
+                return brick.getType();
             }
         }
+        return -1;
+    }
+
+    public boolean isGameOver() {
+        return allCleared;
+    }
+
+    public void dispose() {
+
     }
 }
