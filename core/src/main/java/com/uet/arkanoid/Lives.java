@@ -23,8 +23,8 @@ public class Lives implements Disposable {
     // Graphics
     private Texture heartTexture;
     private BitmapFont font;
-    private final float heartSize = 48f;
-    private final float heartSpacing = 40f;
+    private final float heartSize = 42f;
+    private final float heartSpacing = 50f;
 
     // Animation khi mất mạng
     private float loseLifeTimer = 0f;
@@ -59,7 +59,7 @@ public class Lives implements Disposable {
         font.setColor(Color.WHITE);
 
         // Load ảnh từ file (đặt file heart.png trong thư mục assets/)
-        heartTexture = new Texture(Gdx.files.internal("heart.png"));
+        heartTexture = new Texture(Gdx.files.internal("lives.png"));
     }
 
     /**
@@ -91,7 +91,7 @@ public class Lives implements Disposable {
      * Hiển thị mạng sống
      */
     public void render(SpriteBatch batch) {
-        // Vẽ các tim còn sống
+
         for (int i = 0; i < currentLives; i++) {
             float x = position.x + (i * heartSpacing);
             float y = position.y;
@@ -99,7 +99,7 @@ public class Lives implements Disposable {
             batch.draw(heartTexture, x, y, heartSize, heartSize);
         }
 
-        // Hiệu ứng tim mất dần
+        // Hiệu ứng lives mất dần
         if (isAnimatingLoss && animatingHeartIndex >= 0) {
             float progress = loseLifeTimer / LOSE_LIFE_ANIMATION_TIME;
             if (progress > 1f) progress = 1f;

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
@@ -57,6 +58,7 @@ public class BrickManager {
         }
     }
 
+    // (render, isAllCleared giữ nguyên...)
     public void render(SpriteBatch batch) {
         for (Brick b : bricks) {
             b.render(batch);
@@ -69,20 +71,49 @@ public class BrickManager {
         return true;
     }
 
-    public int checkCollision(Ball ball) {
+    // THAY ĐỔI: Chỉnh sửa hàm checkCollision để nhận ScoreSystem
+    public void checkCollision(Ball ball, ScoreSystem scoreSystem) {
         for (Brick brick : bricks) {
             if (!brick.isDeleted() && brick.getBrickRectangle().overlaps(ball.bounds)) {
-                // Gạch bị trúng
+                // Lấy loại gạch trước khi phá hủy để tính điểm
+                int brickType = brick.getType();
+
+                // Phá gạch
                 brick.destroy();
+
                 // Nảy lại bóng
                 ball.Nay(brick);
+
+                // MỚI: Bổ sung phần cộng điểm
+                int scoreValue = 0;
+                switch (brickType) {
+                    case 0: // Brick0.png
+                        scoreValue = 50;
+                        break;
+                    case 1: // Brick1.png
+                        scoreValue = 80;
+                        break;
+                    case 2: // Brick2.png
+                        scoreValue = 100;
+                        break;
+                    case 3: // Brick3.png
+                        scoreValue = 120;
+                        break;
+                }
+
+                // Gọi ScoreSystem để cộng điểm và tạo hiệu ứng popup
+                if (scoreValue > 0) {
+                    scoreSystem.addScore(scoreValue, new Vector2(brick.getX(), brick.getY()));
+                }
+
                 if (isAllCleared()) {
                     allCleared = true;
                 }
-                return brick.getType();
+
+                // Thoát khỏi vòng lặp sau khi xử lý một va chạm để tránh lỗi
+                return;
             }
         }
-        return -1;
     }
 
     public boolean isGameOver() {
@@ -90,6 +121,6 @@ public class BrickManager {
     }
 
     public void dispose() {
-
+        // ...
     }
 }
