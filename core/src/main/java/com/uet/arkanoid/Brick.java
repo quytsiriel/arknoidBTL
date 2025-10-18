@@ -32,14 +32,29 @@ public class Brick {
         allTextures = textures;
     }
 
-    public void destroy() {
-        hit--;
-        type --;
-        if (type > 0) {
-            brickTexture = allTextures[type]; // đổi texture “ít hư hơn”
-        } else {
-            deleted = true; // nếu lùi quá Brick0 → gạch vỡ hẳn
+    public int destroy() {
+        if (deleted) return -1; // tránh xử lý lại
+
+        //  Nếu là gạch đặc biệt (power-up)
+        if (type == 4 || type == 5 || type == 6) {
+            deleted = true;
+            return type; // Trả về mã loại đặc biệt
         }
+
+        //  Gạch thường có nhiều "hit"
+        hit--;
+        if (hit > 0) {
+            // Cập nhật texture tương ứng (nếu còn texture)
+            if (type > 0) {
+                type--;
+                brickTexture = allTextures[type];
+            }
+            return -1; // chưa vỡ hẳn
+        } else {
+            deleted = true;
+            return type; // gạch thường vỡ hẳn
+        }
+
     }
 
     public boolean isDeleted() {

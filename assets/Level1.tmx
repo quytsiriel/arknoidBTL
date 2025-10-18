@@ -12,6 +12,15 @@
  <tileset firstgid="4" name="Brick3" tilewidth="80" tileheight="30" tilecount="1" columns="1">
   <image source="Brick3.png" width="80" height="30"/>
  </tileset>
+ <tileset firstgid="5" name="Brick4" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick4.png" width="80" height="30"/>
+ </tileset>
+ <tileset firstgid="6" name="Brick5" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick5.png" width="80" height="30"/>
+ </tileset>
+ <tileset firstgid="7" name="Brick6" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick6.png" width="80" height="30"/>
+ </tileset>
  <layer id="1" name="Bricks" width="13" height="27">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -25,14 +34,14 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,2,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,3,3,3,3,3,3,3,3,3,0,0,
+0,0,3,4,0,5,0,5,0,4,3,0,0,
+0,0,3,0,3,0,3,0,3,0,3,0,0,
+0,0,2,7,0,7,0,7,0,7,2,0,0,
+0,0,2,0,3,0,3,0,3,0,2,0,0,
+0,0,2,4,0,4,0,4,0,4,2,0,0,
+0,0,2,0,0,0,0,0,0,0,2,0,0,
+0,0,2,0,0,0,0,0,0,0,2,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,

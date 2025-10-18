@@ -23,7 +23,10 @@ public class BrickManager {
             new Texture("Brick0.png"),
             new Texture("Brick1.png"),
             new Texture("Brick2.png"),
-            new Texture("Brick3.png")
+            new Texture("Brick3.png"),
+            new Texture("Brick4.png"),
+            new Texture("Brick5.png"),
+            new Texture("Brick6.png")
         };
 
         Brick.setAllTextures(BrickTextures);
@@ -45,8 +48,19 @@ public class BrickManager {
                 if (cell != null && cell.getTile() != null) {
                     int tileID = cell.getTile().getId();
 
-                    int type = (tileID - 1) % BrickTextures.length;
-                    int hit = type ;
+                    int type = tileID - 1 ;
+                    int hit = type;
+                    switch (type) {
+                        case 4:
+                            hit = 1;
+                            break;
+                        case 5:
+                            hit = 1;
+                            break;
+                        case 6:
+                            hit = 1;
+                            break;
+                    }
 
                     Texture tex = BrickTextures[type];
                     int px = x * tileWidth;
@@ -72,17 +86,18 @@ public class BrickManager {
     }
 
     // THAY ĐỔI: Chỉnh sửa hàm checkCollision để nhận ScoreSystem
-    public void checkCollision(Ball ball, ScoreSystem scoreSystem) {
+    public int checkCollision(Ball ball, ScoreSystem scoreSystem) {
         for (Brick brick : bricks) {
             if (!brick.isDeleted() && brick.getBrickRectangle().overlaps(ball.bounds)) {
                 // Lấy loại gạch trước khi phá hủy để tính điểm
                 int brickType = brick.getType();
 
                 // Phá gạch
-                brick.destroy();
+                int result = brick.destroy();
 
                 // Nảy lại bóng
                 ball.Nay(brick);
+
 
                 // MỚI: Bổ sung phần cộng điểm
                 int scoreValue = 0;
@@ -110,10 +125,12 @@ public class BrickManager {
                     allCleared = true;
                 }
 
+                return brickType;
+
                 // Thoát khỏi vòng lặp sau khi xử lý một va chạm để tránh lỗi
-                return;
             }
         }
+        return -1;
     }
 
     public boolean isGameOver() {
