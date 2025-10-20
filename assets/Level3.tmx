@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="27" tilewidth="80" tileheight="30" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" name="Brick0" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick0.png" width="80" height="30"/>
+ </tileset>
+ <tileset firstgid="2" name="Brick1" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick1.png" width="80" height="30"/>
+ </tileset>
+ <tileset firstgid="3" name="Brick2" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick2.png" width="80" height="30"/>
+ </tileset>
+ <tileset firstgid="4" name="Brick3" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick3.png" width="80" height="30"/>
+ </tileset>
+ <tileset firstgid="5" name="Brick4" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick4.png" width="80" height="30"/>
+ </tileset>
+ <tileset firstgid="6" name="Brick5" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick5.png" width="80" height="30"/>
+ </tileset>
+ <tileset firstgid="7" name="Brick6" tilewidth="80" tileheight="30" tilecount="1" columns="1">
+  <image source="Brick6.png" width="80" height="30"/>
+ </tileset>
+ <layer id="1" name="Bricks" width="13" height="27">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,1,1,1,1,1,1,1,1,1,1,1,0,
+0,1,2,2,2,2,2,2,2,2,2,1,0,
+0,1,0,3,0,3,0,3,0,3,0,1,0,
+0,1,2,2,2,2,2,2,2,2,2,1,0,
+0,1,0,3,0,3,0,3,0,3,0,1,0,
+0,1,2,2,2,2,2,2,2,2,2,1,0,
+0,1,0,7,0,6,0,6,0,7,0,1,0,
+0,1,4,0,4,0,4,0,4,0,4,1,0,
+0,1,4,0,4,0,4,0,4,0,4,1,0,
+0,1,4,0,4,0,4,0,4,0,4,1,0,
+0,1,4,0,4,0,4,0,4,0,4,1,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>
