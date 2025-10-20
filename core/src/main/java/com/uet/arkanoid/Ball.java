@@ -36,10 +36,10 @@ public class Ball {
 
     // Khởi động bóng với góc ban đầu (độ)
     public void launch(float angleDegrees) {
+        active = true;
         float angleRad = (float) Math.toRadians(angleDegrees);
         velocity.x = (float) Math.cos(angleRad) * speed;
         velocity.y = (float) Math.sin(angleRad) * speed;
-        active = true;
     }
 
     // Cập nhật vị trí bóng
@@ -92,6 +92,7 @@ public class Ball {
         position.set(x, y);
         velocity.set(0, 0);
         active = false;
+        updateBounds();
     }
 
     // Tăng tốc độ
