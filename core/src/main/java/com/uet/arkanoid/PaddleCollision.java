@@ -8,6 +8,11 @@ public class PaddleCollision {
 
     public void checkCollision(Paddle paddle, Ball ball) {
         // Chỉ kiểm tra khi bóng đang hoạt động và đi xuống
+
+        if (!ball.isActive() || ball.getVelocity().y >= 0) {
+            return;
+        }
+
         if (ball.isActive() && ball.velocity.y < 0 && paddle.getBounds().overlaps(ball.getBounds())) {
 
             // 1. Tính toán vị trí va chạm

@@ -78,6 +78,7 @@ public class Paddle {
     }
 
     public void resetPosition() {
+        float screenWidth = Gdx.graphics.getWidth();
         bounds.x = (Gdx.graphics.getWidth() - bounds.width) / 2f;
         bounds.y = 50; // khoảng cách từ đáy lên
     }
