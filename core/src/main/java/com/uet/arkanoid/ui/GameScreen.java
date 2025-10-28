@@ -6,17 +6,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.uet.arkanoid.Main;
 import com.uet.arkanoid.ball.Ball;
-import com.uet.arkanoid.ball.NormalBall;
 import com.uet.arkanoid.brick.BrickManager;
-import com.uet.arkanoid.paddle.PaddleNormal;
+import com.uet.arkanoid.paddle.Paddle;
+import com.uet.arkanoid.paddle.PaddleCollision;
 
 public class GameScreen {
     private final Main game;
     private final SpriteBatch batch;
     private Texture background;
     private Ball ball;
-    private PaddleNormal paddle;
+    private Paddle paddle;
     private BrickManager brickManager;
+    private PaddleCollision paddleCollision;
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
 
@@ -27,7 +28,8 @@ public class GameScreen {
 
     public void startNewGame(Difficulty difficulty) {
         background = new Texture(Gdx.files.internal("background.png"));
-        paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
+        paddle = new Paddle((Gdx.graphics.getWidth() - 128) / 2f, 50);
+        paddleCollision = new PaddleCollision();
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
         livesSystem = new Lives(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 70);
         brickManager = new BrickManager("Level1.tmx");
@@ -38,7 +40,7 @@ public class GameScreen {
             case HARD -> 650;
             default -> 500;
         };
-        ball = new NormalBall(Gdx.graphics.getWidth() / 2f, paddle.getY() + 20, 10, ballSpeed, ballTexture);
+        ball = new Ball(Gdx.graphics.getWidth() / 2f, paddle.getY() + 20, 10, ballSpeed, ballTexture);
         ball.launch(60);
     }
 
@@ -49,7 +51,7 @@ public class GameScreen {
         paddle.update(delta);
         ball.update(delta);
         brickManager.checkCollision(ball, scoreSystem);
-        paddle.checkCollision(ball);
+        paddleCollision.checkCollision(paddle, ball);
         checkWallCollision();
 
         scoreSystem.update(delta);

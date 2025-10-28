@@ -5,24 +5,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.uet.arkanoid.brick.Brick;
+import com.uet.arkanoid.ui.Lives;
 
-/**
- * Lớp trừu tượng (Abstract Class) cho tất cả các loại bóng.
- * Cung cấp thuộc tính chung và buộc lớp con phải triển khai logic va chạm.
- */
-public abstract class Ball {
-    // (Giữ nguyên các thuộc tính protected)
-    protected Vector2 position;
-    protected Vector2 velocity;
-    protected float radius;
-    protected Texture texture;
-    protected float width;
-    protected float height;
-    public float speed;
-    protected boolean active;
-    protected Rectangle bounds;
+public class Ball {
+    private Vector2 position;      // Vị trí của bóng
+    private Vector2 velocity;      // Vận tốc của bóng
+    private float radius;          // Bán kính của bóng (cho logic game)
+    private Texture texture;       // Texture hình ảnh
+    private float width;           // Chiều rộng hiển thị
+    private float height;          // Chiều cao hiển thị
+    public float speed;           // Tốc độ cơ bản
+    private boolean active;        // Trạng thái hoạt động
+    private Rectangle bounds;      // Hình chữ nhật bao quanh (cho collision)
 
-    // Constructor vẫn giữ nguyên
+    // Constructor
     public Ball(float x, float y, float radius, float speed, Texture texture) {
         this.position = new Vector2(x, y);
         this.velocity = new Vector2(0, 0);
@@ -32,31 +28,23 @@ public abstract class Ball {
         this.width = radius * 2;
         this.height = radius * 2;
         this.active = false;
-        // Khởi tạo bounds
         this.bounds = new Rectangle(x - radius, y - radius, width, height);
     }
 
-    // Phương thức bắt buộc lớp con phải triển khai
-    public abstract void handleBrickCollision(Brick brick);
-
-    // Các phương thức cụ thể khác vẫn giữ nguyên logic đã có
-    /**
-     * Thiết lập vận tốc ban đầu và phóng bóng đi.
-     * Góc 90 độ là đi thẳng lên.
-     * @param angleDegrees Góc phóng so với trục X (ví dụ: 90 độ là thẳng đứng).
-     */
-    public void launch(float angleDegrees) {
-        if (active) return;
-        double angleRad = Math.toRadians(angleDegrees);
-        float newVx = (float) (speed * Math.cos(angleRad));
-        float newVy = (float) (speed * Math.sin(angleRad));
-        setVelocity(newVx, newVy);
-        this.active = true;
+    // Constructor (để thêm ảnh quả bóng)
+    public Ball(float x, float y, float radius, float speed, String texturePath) {
+        this(x, y, radius, speed, new Texture(texturePath));
     }
-    /**
-     * Cập nhật vị trí bóng dựa trên vận tốc và thời gian trôi qua.
-     * @param delta Thời gian trôi qua kể từ khung hình trước (giây).
-     */
+
+    // Khởi động bóng với góc ban đầu (độ)
+    public void launch(float angleDegrees) {
+        float angleRad = (float) Math.toRadians(angleDegrees);
+        velocity.x = (float) Math.cos(angleRad) * speed;
+        velocity.y = (float) Math.sin(angleRad) * speed;
+        active = true;
+    }
+
+    // Cập nhật vị trí bóng
     public void update(float delta) {
         if (active) {
             position.x += velocity.x * delta;
@@ -66,104 +54,163 @@ public abstract class Ball {
     }
 
     // Cập nhật bounds theo vị trí hiện tại
-    protected void updateBounds() {
-        // Cập nhật bounds: vị trí x, y là góc dưới trái của hình chữ nhật bao quanh
+    private void updateBounds() {
         bounds.setPosition(position.x - width / 2, position.y - height / 2);
     }
 
-    // Phương thức vẽ bóng
+    // Vẽ bóng
     public void render(SpriteBatch batch) {
         if (texture != null) {
+            // Vẽ texture với tâm ở vị trí position
             batch.draw(texture,
-                position.x - width / 2,
-                position.y - height / 2,
-                width,
-                height);
+                position.x - width / 2,   // x (góc dưới trái)
+                position.y - height / 2,  // y (góc dưới trái)
+                width,                     // width
+                height);                   // height
         }
     }
 
+    // Đảo chiều theo trục X (va chạm tường trái/phải)
     public void reverseX() {
         velocity.x = -velocity.x;
     }
 
+    // Đảo chiều theo trục Y (va chạm tường trên/dưới)
     public void reverseY() {
         velocity.y = -velocity.y;
     }
 
+    public void Nay(Brick brick) {
+        if (position.y > brick.getY() + 30f || position.y  < brick.getY()) {
+            velocity.y *= -1;
+        }
+        else if(position.x <= brick.getX() || position.x  >= brick.getX() + 80f) {
+            velocity.x *= -1;
+        }
+    }
+
+    // Reset bóng về vị trí ban đầu
     public void reset(float x, float y) {
         position.set(x, y);
         velocity.set(0, 0);
         active = false;
-        updateBounds();
     }
 
-    public boolean isActive() { return active; }
-    public void dispose() {
-        if (texture != null) {
-            texture.dispose();
+    // Tăng tốc độ
+    public void increaseSpeed(float amount) {
+        speed += amount;
+        // Cập nhật velocity theo tỷ lệ
+        float currentSpeed = velocity.len();
+        if (currentSpeed > 0) {
+            velocity.scl(speed / currentSpeed);
         }
     }
 
-    /** Trả về vị trí tâm của bóng (Vector2). */
     public Vector2 getPosition() {
         return position;
     }
 
-    /** Trả về tọa độ X của tâm bóng. */
-    public float getX() {
-        return position.x;
-    }
-
-    /** Trả về tọa độ Y của tâm bóng. */
-    public float getY() {
-        return position.y;
-    }
-
-    /** Trả về bán kính của bóng. */
-    public float getRadius() {
-        return radius;
-    }
-
-    /** Trả về vận tốc hiện tại (Vector2). */
     public Vector2 getVelocity() {
         return velocity;
     }
 
-    /** Trả về vùng giới hạn va chạm (Rectangle). */
+    public float getRadius() {
+        return radius;
+    }
+
+    public float getX() {
+        return position.x;
+    }
+
+    public float getY() {
+        return position.y;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
     public Rectangle getBounds() {
         return bounds;
     }
 
-    /** Trả về tốc độ hiện tại của bóng (độ lớn vector vận tốc). */
-    public float getSpeed() {
-        // Dùng thuộc tính speed đã lưu, hoặc có thể tính lại bằng velocity.len();
-        return speed;
-    }
-
-    /** * Thiết lập vị trí mới cho bóng và cập nhật bounds.
-     * @param x Tọa độ X mới.
-     * @param y Tọa độ Y mới.
-     */
     public void setPosition(float x, float y) {
-        this.position.set(x, y);
+        position.set(x, y);
         updateBounds();
     }
 
-    /** * Thiết lập vận tốc mới cho bóng và cập nhật speed.
-     * @param vx Vận tốc X mới.
-     * @param vy Vận tốc Y mới.
-     */
     public void setVelocity(float vx, float vy) {
-        this.velocity.set(vx, vy);
-        // Cập nhật speed sau khi vận tốc thay đổi
-        this.speed = velocity.len();
+        velocity.set(vx, vy);
     }
 
-    /**
-     * Thiết lập trạng thái hoạt động của bóng.
-     * @param active True nếu bóng đang bay, false nếu bóng đang gắn với paddle.
-     */
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    public void setSize(float width, float height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    // Kiểm tra bóng có ra khỏi màn hình không
+    public boolean isOutOfBounds(float screenWidth, float screenHeight) {
+        return position.x < -radius || position.x > screenWidth + radius ||
+            position.y < -radius || position.y > screenHeight + radius;
+    }
+
+    // Kiem tra bong ra khoi canh duoi
+    public boolean isFallenOffScreen(float screenHeight) {
+        return position.y < -radius;
+    }
+
+    // Kiem tra bong roi = mat mang
+    public boolean checkAndHandleLostLife(float screenWidth, float screenHeight,
+                                          Lives lives, float resetX, float resetY) {
+        // Chỉ kiểm tra khi bóng rơi xuống dưới màn hình
+        if (position.y < -radius && active) {
+            active = false;
+            boolean stillAlive = lives.loseLife();
+
+            if (stillAlive) {
+                // Reset bóng về vị trí ban đầu để chơi tiếp
+                reset(resetX, resetY);
+                return true;
+            } else {
+                // Game Over
+                return false;
+            }
+        }
+        return true; // Bóng vẫn đang chơi bình thường
+    }
+
+    // Giải phóng tài nguyên
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+        }
     }
 }
