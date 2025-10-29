@@ -2,37 +2,45 @@ package com.uet.arkanoid.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.uet.arkanoid.Main;
+import com.uet.arkanoid.ArkanoidGame; // Import lớp Game chính
+import com.sun.tools.javac.Main;
+import com.uet.arkanoid.ArkanoidGame;
 
-/** Launches the desktop (LWJGL3) application. */
-public class  Lwjgl3Launcher {
+/**
+ * Lớp khởi chạy ứng dụng trên Desktop (sử dụng LWJGL3).
+ * Thiết lập các thông số cấu hình cửa sổ và khởi tạo lớp ArkanoidGame.
+ */
+public class Lwjgl3Launcher {
     public static void main(String[] args) {
-        if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+        // Đây là phương thức hỗ trợ cần thiết cho macOS và Windows để khởi chạy ổn định hơn
+        // Giả định StartupHelper đã được định nghĩa trong dự án của bạn
+        if (StartupHelper.startNewJvmIfRequired()) return;
         createApplication();
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new Main(), getDefaultConfiguration());
+        // Khởi tạo ứng dụng bằng lớp ArkanoidGame đã định nghĩa
+        return new Lwjgl3Application(new com.uet.arkanoid.ArkanoidGame(), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-        configuration.setTitle("Arknoid");
-        //// Vsync limits the frames per second to what your hardware can display, and helps eliminate
-        //// screen tearing. This setting doesn't always work on Linux, so the line after is a safeguard.
-        configuration.useVsync(true);
-        //// Limits FPS to the refresh rate of the currently active monitor, plus 1 to try to match fractional
-        //// refresh rates. The Vsync setting above should limit the actual FPS to match the monitor.
-        configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
-        //// If you remove the above line and set Vsync to false, you can get unlimited FPS, which can be
-        //// useful for testing performance, but can also be very stressful to some hardware.
-        //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
 
+        // VSync và FPS
+        configuration.useVsync(true);
+        // Giới hạn FPS dựa trên tần số quét của màn hình
+        configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
+
+        // Lấy tiêu đề từ hằng số trong lớp ArkanoidGame
+        configuration.setTitle(com.uet.arkanoid.ArkanoidGame.TITLE);
+
+        // Thiết lập kích thước cửa sổ cố định theo yêu cầu
         configuration.setWindowedMode(1240, 810);
-        configuration.setResizable(false); // khóa kích thước cửa sổ
-        //// You can change these files; they are in lwjgl3/src/main/resources/ .
-        //// They can also be loaded from the root of assets/ .
+        configuration.setResizable(false); // Khóa kích thước cửa sổ
+
+        // Thiết lập icon cửa sổ
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+
         return configuration;
     }
 }
