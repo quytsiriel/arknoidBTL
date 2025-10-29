@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.uet.arkanoid.Main;
 import com.uet.arkanoid.ball.Ball;
+import com.uet.arkanoid.ball.NormalBall;
 import com.uet.arkanoid.brick.BrickManager;
 import com.uet.arkanoid.paddle.Paddle;
 import com.uet.arkanoid.paddle.PaddleCollision;
+
 
 public class GameScreen {
     private final Main game;
@@ -40,7 +42,7 @@ public class GameScreen {
             case HARD -> 650;
             default -> 500;
         };
-        ball = new Ball(Gdx.graphics.getWidth() / 2f, paddle.getY() + 20, 10, ballSpeed, ballTexture);
+        ball = new NormalBall(Gdx.graphics.getWidth() / 2f, paddle.getY() + 20, 10, ballSpeed, ballTexture);
         ball.launch(60);
     }
 
