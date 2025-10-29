@@ -1,5 +1,7 @@
 package com.uet.arkanoid.brick;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -14,6 +16,7 @@ public class BrickManager {
     private ArrayList<Brick> bricks;
     private Texture[] brickTextures;
     private boolean allCleared = false;
+    private Sound hitSound;
 
     public BrickManager(String mapPath) {
         // Load texture
@@ -27,6 +30,7 @@ public class BrickManager {
             new Texture("Brick6.png")
         };
         NormalBrick.setAllTextures(brickTextures);
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("hit.wav"));
 
         // Load bricks từ level
         bricks = LevelLoader.loadLevel(mapPath, brickTextures);
@@ -50,6 +54,8 @@ public class BrickManager {
 
                 int scoreValue = (brick instanceof PowerUpBrick) ? 200 : 100;
                 scoreSystem.addScore(scoreValue, new Vector2(brick.getX(), brick.getY()));
+
+                hitSound.play(0.3f); //volume chỉnh ở đây
 
                 if (isAllCleared()) allCleared = true;
                 return brickType;

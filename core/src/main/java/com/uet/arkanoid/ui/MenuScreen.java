@@ -1,6 +1,7 @@
 package com.uet.arkanoid.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,6 +14,7 @@ public class MenuScreen {
     private final Main game;
     private final SpriteBatch batch;
     private final BitmapFont font;
+    private Music BackgroundSound;
 
     private Texture menuBackground;
     private Texture button1PlayerTexture;
@@ -21,6 +23,9 @@ public class MenuScreen {
 
     private Rectangle button1PlayerBounds;
     private Rectangle button2PlayerBounds;
+    private SoundManager sound;
+
+
 
     public MenuScreen(Main game) {
         this.game = game;
@@ -38,8 +43,6 @@ public class MenuScreen {
         batch.draw(menuBackground, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.draw(button1PlayerTexture, button1PlayerBounds.x, button1PlayerBounds.y, button1PlayerBounds.width, button1PlayerBounds.height);
         batch.draw(button2PlayerTexture, button2PlayerBounds.x, button2PlayerBounds.y, button2PlayerBounds.width, button2PlayerBounds.height);
-
-
         batch.end();
     }
 
@@ -49,7 +52,10 @@ public class MenuScreen {
             touchPos.y = Gdx.graphics.getHeight() - touchPos.y;
 
             if (button1PlayerBounds.contains(touchPos.x, touchPos.y)) {
+                sound.stopBackgroundMusic();
+                sound.playGameMusic();
                 game.startGame();
+
             }
             if (button2PlayerBounds.contains(touchPos.x, touchPos.y)) {
                 // Tạm thời dùng chung
@@ -72,6 +78,8 @@ public class MenuScreen {
 
         button1PlayerBounds = new Rectangle(bx, 362, bw, bh);
         button2PlayerBounds = new Rectangle(bx+ 7, 240, bw-10, bh-10);
+        sound = new SoundManager();
+        sound.playBackgroundMusic();
     }
 
     public void dispose() {
@@ -81,5 +89,7 @@ public class MenuScreen {
         button1PlayerTexture.dispose();
         button2PlayerTexture.dispose();
         buttonDifficultyTexture.dispose();
+
+
     }
 }
