@@ -1,62 +1,60 @@
 package com.uet.arkanoid.paddle;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.Gdx;
+import com.uet.arkanoid.ball.Ball;
 
-public class Paddle {
-    private Texture texture;
-    private Rectangle bounds;
-    private float speed;
+/**
+ * Lớp cha trừu tượng cho các vật thể trong game (Paddle nói chung).
+ */
 
+public abstract class Paddle {
 
-    public Paddle(float x, float y) {
-        // Tải ảnh paddle
-        texture = new Texture(Gdx.files.internal("paddle.png"));
+    protected Rectangle bounds;
+    protected Texture texture;
 
-        // Kích thước paddle
-        float width = texture.getWidth();
-        float height = texture.getHeight();
-
-        // Tạo vùng va chạm
-        bounds = new Rectangle(x, y, width, height);
-
-        // Tốc độ di chuyển
-        speed = 500f;
-
-        float desiredWidth = 130;  // chiều rộng mong muốn (px)
-        float aspectRatio = (float) texture.getHeight() / texture.getWidth();
-        float desiredHeight = desiredWidth * aspectRatio;
-
-        bounds = new Rectangle(x, y, desiredWidth, desiredHeight);
-
-    }
-
-    public void update(float delta) {
-        // Điều khiển paddle bằng bàn phím
-        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.LEFT)) {
-            bounds.x -= speed * delta;
-        }
-        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.RIGHT)) {
-            bounds.x += speed * delta;
+    /**
+     * Constructor cho một thực thể game.
+     * @param texturePath Đường dẫn đến file ảnh.
+     */
+    public Paddle(String texturePath) {
+        if (texturePath != null && !texturePath.isEmpty()) {
+            this.texture = new Texture(Gdx.files.internal(texturePath));
         }
 
-        // Giới hạn không cho paddle ra khỏi màn hình
-        if (bounds.x < 0) bounds.x = 0;
-        if (bounds.x + bounds.width > Gdx.graphics.getWidth())
-            bounds.x = Gdx.graphics.getWidth() - bounds.width;
+        this.bounds = new Rectangle();
     }
+
+    /**
+     * Phương thức update logic, được gọi mỗi frame.
+     * Lớp con BẮT BUỘC phải định nghĩa (implement).
+     */
+    public abstract void update(float delta);
+
+    /**
+     * Phương thức vẽ chung.
+     * Lớp con có thể @Override nếu cần hành vi vẽ đặc biệt.
+     */
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, bounds.x, bounds.y, bounds.width, bounds.height);
+        if (texture != null) {
+            batch.draw(texture, bounds.x, bounds.y, bounds.width, bounds.height);
+        }
     }
 
+    /**
+     * Giải phóng tài nguyên (texture).
+     */
     public void dispose() {
-        texture.dispose();
+        if (texture != null) {
+            texture.dispose();
+        }
     }
 
-    // Getter cho vị trí paddle
+    // --- Các Getter chung ---
+
     public Rectangle getBounds() {
         return bounds;
     }
@@ -75,10 +73,5 @@ public class Paddle {
 
     public float getHeight() {
         return bounds.height;
-    }
-
-    public void resetPosition() {
-        bounds.x = (Gdx.graphics.getWidth() - bounds.width) / 2f;
-        bounds.y = 50; // khoảng cách từ đáy lên
     }
 }

@@ -8,7 +8,7 @@ import com.uet.arkanoid.brick.Brick;
 import com.uet.arkanoid.ui.Lives;
 
 public class Ball {
-    private Vector2 position;      // Vị trí của bóng
+    public Vector2 position;      // Vị trí của bóng
     private Vector2 velocity;      // Vận tốc của bóng
     private float radius;          // Bán kính của bóng (cho logic game)
     private Texture texture;       // Texture hình ảnh

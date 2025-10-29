@@ -40,25 +40,17 @@ public class PaddleNormal extends Paddle {
     }
 
     public void resetPosition() {
-        bounds.x = (Gdx.graphics.getWidth() - bounds.width) / 2f;
+        bounds.x = (Gdx.graphics.getWidth() - bounds.width - 200) / 2f;
         bounds.y = 50;
     }
 
-    // --- ĐÂY LÀ PHƯƠNG THỨC MỚI ĐƯỢC CHUYỂN VÀO ---
-    /**
-     * Kiểm tra va chạm giữa paddle (này) và quả bóng.
-     * @param ball Quả bóng để kiểm tra.
-     */
     public void checkCollision(Ball ball) {
-        // Thay 'paddle.getBounds()' bằng 'this.getBounds()' (hoặc chỉ 'getBounds()')
         if (ball.isActive() && ball.getVelocity().y < 0 && this.getBounds().overlaps(ball.getBounds())) {
 
             float ballCenterX = ball.getX();
-            // Thay 'paddle.getX()' bằng 'this.getX()' (hoặc chỉ 'getX()')
             float paddleCenterX = this.getX() + this.getWidth() / 2;
             float hitPosition = ballCenterX - paddleCenterX;
 
-            // Thay 'paddle.getWidth()' bằng 'this.getWidth()'
             float normalizedPosition = hitPosition / (this.getWidth() / 2);
             normalizedPosition = Math.max(-1f, Math.min(1f, normalizedPosition));
 
@@ -71,7 +63,6 @@ public class PaddleNormal extends Paddle {
             float newVy = (float) (currentSpeed * Math.sin(newAngleRad));
             ball.setVelocity(newVx, newVy);
 
-            // Thay 'paddle.getY()' và 'paddle.getHeight()' bằng 'this'
             float newBallY = this.getY() + this.getHeight() + ball.getRadius();
             ball.setPosition(ball.getX(), newBallY);
         }

@@ -17,13 +17,12 @@ public class NormalBall extends Ball {
         super(x, y, radius, speed, texture);
     }
 
-    @Override
     public void handleBrickCollision(Brick brick) {
         if (position.y > brick.getY() + 30f || position.y  < brick.getY()) {
-            velocity.y *= -1;
+            getVelocity().y *= -1;
         }
         else if(position.x <= brick.getX() || position.x  >= brick.getX() + 80f) {
-            velocity.x *= -1;
+            getVelocity().x *= -1;
         }
     }
 }

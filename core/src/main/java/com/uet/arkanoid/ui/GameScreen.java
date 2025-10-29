@@ -6,20 +6,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.uet.arkanoid.Main;
 import com.uet.arkanoid.ball.Ball;
+import com.uet.arkanoid.ball.NormalBall;
 import com.uet.arkanoid.brick.BrickManager;
-import com.uet.arkanoid.paddle.Paddle;
-import com.uet.arkanoid.paddle.PaddleCollision;
+import com.uet.arkanoid.paddle.PaddleNormal;
+import com.uet.arkanoid.paddle.PlayerStateManager;
 
 public class GameScreen {
     private final Main game;
     private final SpriteBatch batch;
     private Texture background;
     private Ball ball;
-    private Paddle paddle;
+    private PaddleNormal paddle;
     private BrickManager brickManager;
-    private PaddleCollision paddleCollision;
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
+    private PlayerStateManager playerStateManager;
 
     public GameScreen(Main game) {
         this.game = game;
@@ -28,11 +29,11 @@ public class GameScreen {
 
     public void startNewGame(Difficulty difficulty) {
         background = new Texture(Gdx.files.internal("background.png"));
-        paddle = new Paddle((Gdx.graphics.getWidth() - 128) / 2f, 50);
-        paddleCollision = new PaddleCollision();
+        paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
         livesSystem = new Lives(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 70);
         brickManager = new BrickManager("Level1.tmx");
+
 
         Texture ballTexture = new Texture(Gdx.files.internal("ball.png"));
         float ballSpeed = switch (difficulty) {
@@ -40,8 +41,9 @@ public class GameScreen {
             case HARD -> 650;
             default -> 500;
         };
-        ball = new Ball(Gdx.graphics.getWidth() / 2f, paddle.getY() + 20, 10, ballSpeed, ballTexture);
-        ball.launch(60);
+        ball = new NormalBall((Gdx.graphics.getWidth() - 200)/ 2f, paddle.getY() + 30, 10, ballSpeed, ballTexture);
+
+        playerStateManager = new PlayerStateManager(ball, paddle, livesSystem, game);
     }
 
     public void render() {
@@ -49,10 +51,14 @@ public class GameScreen {
         float delta = Gdx.graphics.getDeltaTime();
 
         paddle.update(delta);
-        ball.update(delta);
-        brickManager.checkCollision(ball, scoreSystem);
-        paddleCollision.checkCollision(paddle, ball);
-        checkWallCollision();
+        playerStateManager.update(delta);
+
+        if (ball.isActive()) {
+            ball.update(delta);
+            brickManager.checkCollision(ball, scoreSystem);
+            paddle.checkCollision(ball);
+            checkWallCollision();
+        }
 
         scoreSystem.update(delta);
         livesSystem.update(delta);
@@ -74,15 +80,6 @@ public class GameScreen {
             ball.reverseY();
         if (brickManager.isAllCleared()) {
             game.returnToMenu();
-        }
-        if (ball.getY() < -ball.getRadius()) {
-            boolean stillAlive = livesSystem.loseLife();
-            if (stillAlive) {
-                ball.reset(paddle.getX() + 65f , paddle.getY() + 20);
-                ball.launch(60);
-            } else {
-                game.returnToMenu();
-            }
         }
     }
 

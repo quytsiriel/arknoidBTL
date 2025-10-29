@@ -125,7 +125,6 @@ public class Lives implements Disposable {
             position.y + heartSize / 2 + 8);
     }
 
-
     /**
      * Vẽ đơn giản bằng ShapeRenderer (debug)
      */
@@ -153,7 +152,6 @@ public class Lives implements Disposable {
         }
         return false;
     }
-
     /**
      * Thêm một mạng
      */
