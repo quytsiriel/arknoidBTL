@@ -97,7 +97,7 @@ public class BrickManager {
                 int result = brick.destroy();
 
                 // Nảy lại bóng
-                ball.Nay(brick);
+                ball.handleBrickCollision(brick);
 
 
                 // MỚI: Bổ sung phần cộng điểm
