@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.uet.arkanoid.Main;
 import com.uet.arkanoid.ball.Ball;
 import com.uet.arkanoid.brick.BrickManager;
-import com.uet.arkanoid.paddle.Paddle;
+import com.uet.arkanoid.paddle.PaddleNormal;
 import com.uet.arkanoid.paddle.PaddleCollision;
 
 public class GameScreen {
@@ -15,7 +15,7 @@ public class GameScreen {
     private final SpriteBatch batch;
     private Texture background;
     private Ball ball;
-    private Paddle paddle;
+    private PaddleNormal paddle;
     private BrickManager brickManager;
     private PaddleCollision paddleCollision;
     private ScoreSystem scoreSystem;
@@ -28,7 +28,7 @@ public class GameScreen {
 
     public void startNewGame(Difficulty difficulty) {
         background = new Texture(Gdx.files.internal("background.png"));
-        paddle = new Paddle((Gdx.graphics.getWidth() - 128) / 2f, 50);
+        paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
         paddleCollision = new PaddleCollision();
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
         livesSystem = new Lives(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 70);

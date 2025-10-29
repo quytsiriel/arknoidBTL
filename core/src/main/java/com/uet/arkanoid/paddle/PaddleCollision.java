@@ -1,13 +1,12 @@
 package com.uet.arkanoid.paddle;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.uet.arkanoid.ball.Ball;
 
 public class PaddleCollision {
 
     private static final float MAX_BOUNCE_ANGLE_DEGREES = 75f;
 
-    public void checkCollision(Paddle paddle, Ball ball) {
+    public void checkCollision(PaddleNormal paddle, Ball ball) {
         // Chỉ kiểm tra khi bóng đang hoạt động và đi xuống
         if (ball.isActive() && ball.getVelocity().y < 0 && paddle.getBounds().overlaps(ball.getBounds())) {
 
