@@ -45,8 +45,8 @@ public class Main extends ApplicationAdapter {
         }
     }
 
-    public void startGame(Difficulty difficulty) {
-        gameScreen.startNewGame(difficulty);
+    public void startGame() {
+        gameScreen.startNewGame();
         gameState = GameState.PLAYING;
     }
 

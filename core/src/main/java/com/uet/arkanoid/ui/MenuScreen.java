@@ -21,9 +21,6 @@ public class MenuScreen {
 
     private Rectangle button1PlayerBounds;
     private Rectangle button2PlayerBounds;
-    private Rectangle buttonDifficultyBounds;
-
-    private Difficulty currentDifficulty = Difficulty.NORMAL;
 
     public MenuScreen(Main game) {
         this.game = game;
@@ -41,11 +38,7 @@ public class MenuScreen {
         batch.draw(menuBackground, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.draw(button1PlayerTexture, button1PlayerBounds.x, button1PlayerBounds.y, button1PlayerBounds.width, button1PlayerBounds.height);
         batch.draw(button2PlayerTexture, button2PlayerBounds.x, button2PlayerBounds.y, button2PlayerBounds.width, button2PlayerBounds.height);
-        batch.draw(buttonDifficultyTexture, buttonDifficultyBounds.x, buttonDifficultyBounds.y, buttonDifficultyBounds.width, buttonDifficultyBounds.height);
 
-        font.draw(batch, currentDifficulty.getDisplayName(),
-            buttonDifficultyBounds.x + buttonDifficultyBounds.width + 20,
-            buttonDifficultyBounds.y + 45);
 
         batch.end();
     }
@@ -56,19 +49,13 @@ public class MenuScreen {
             touchPos.y = Gdx.graphics.getHeight() - touchPos.y;
 
             if (button1PlayerBounds.contains(touchPos.x, touchPos.y)) {
-                game.startGame(currentDifficulty);
+                game.startGame();
             }
             if (button2PlayerBounds.contains(touchPos.x, touchPos.y)) {
                 // Tạm thời dùng chung
-                game.startGame(currentDifficulty);
+                game.startGame();
             }
-            if (buttonDifficultyBounds.contains(touchPos.x, touchPos.y)) {
-                switch (currentDifficulty) {
-                    case EASY:   currentDifficulty = Difficulty.NORMAL; break;
-                    case NORMAL: currentDifficulty = Difficulty.HARD;   break;
-                    case HARD:   currentDifficulty = Difficulty.EASY;   break;
-                }
-            }
+
         }
     }
 
@@ -80,12 +67,11 @@ public class MenuScreen {
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
-        float bw = 400, bh = 90;
+        float bw = 300, bh = 100;
         float bx = (w - bw) / 2;
 
-        button1PlayerBounds = new Rectangle(bx, h / 2 + 80, bw, bh);
-        button2PlayerBounds = new Rectangle(bx, h / 2, bw, bh);
-        buttonDifficultyBounds = new Rectangle(bx, h / 2 - 80, bw, bh);
+        button1PlayerBounds = new Rectangle(bx, 362, bw, bh);
+        button2PlayerBounds = new Rectangle(bx+ 7, 240, bw-10, bh-10);
     }
 
     public void dispose() {

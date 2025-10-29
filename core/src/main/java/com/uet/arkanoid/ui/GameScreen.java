@@ -27,20 +27,16 @@ public class GameScreen {
         batch = new SpriteBatch();
     }
 
-    public void startNewGame(Difficulty difficulty) {
+    public void startNewGame() {
         background = new Texture(Gdx.files.internal("background.png"));
         paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
-        livesSystem = new Lives(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 70);
+        livesSystem = new Lives(1070, 189);
         brickManager = new BrickManager("Level1.tmx");
 
 
         Texture ballTexture = new Texture(Gdx.files.internal("ball.png"));
-        float ballSpeed = switch (difficulty) {
-            case EASY -> 400;
-            case HARD -> 650;
-            default -> 500;
-        };
+        float ballSpeed = 500;
         ball = new NormalBall((Gdx.graphics.getWidth() - 200)/ 2f, paddle.getY() + 30, 10, ballSpeed, ballTexture);
 
         playerStateManager = new PlayerStateManager(ball, paddle, livesSystem, game);
