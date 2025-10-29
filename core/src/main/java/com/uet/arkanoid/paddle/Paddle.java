@@ -4,13 +4,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Gdx;
+import com.uet.arkanoid.ball.Ball;
 
 /**
  * Lớp cha trừu tượng cho các vật thể trong game (Paddle nói chung).
  */
+
 public abstract class Paddle {
 
-    // protected để các lớp con (như Paddle) có thể truy cập
     protected Rectangle bounds;
     protected Texture texture;
 
@@ -36,6 +37,7 @@ public abstract class Paddle {
      * Phương thức vẽ chung.
      * Lớp con có thể @Override nếu cần hành vi vẽ đặc biệt.
      */
+
     public void render(SpriteBatch batch) {
         if (texture != null) {
             batch.draw(texture, bounds.x, bounds.y, bounds.width, bounds.height);

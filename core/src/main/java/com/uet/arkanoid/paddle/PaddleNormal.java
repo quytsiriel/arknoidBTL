@@ -1,34 +1,26 @@
 package com.uet.arkanoid.paddle;
 
 import com.badlogic.gdx.Gdx;
+import com.uet.arkanoid.ball.Ball; // <-- Thêm import cho Ball
 import com.uet.arkanoid.paddle.Paddle;
 
-// Paddle BÂY GIỜ kế thừa từ PaddleNoiChung
 public class PaddleNormal extends Paddle {
 
-    // 'texture' và 'bounds' đã được kế thừa từ PaddleNoiChung
+    private static final float MAX_BOUNCE_ANGLE_DEGREES = 75f;
 
     private float speed;
 
     public PaddleNormal(float x, float y) {
-        // 1. Gọi constructor của lớp cha để tải texture "paddle.png"
         super("paddle.png");
-
-        // 2. Định nghĩa các thuộc tính riêng của Paddle
         this.speed = 500f;
-
-        // 3. Thiết lập kích thước mong muốn cho bounds (đã được khởi tạo ở lớp cha)
         float desiredWidth = 130;
         float aspectRatio = (float) texture.getHeight() / texture.getWidth();
         float desiredHeight = desiredWidth * aspectRatio;
-
-        // 4. Thiết lập vị trí và kích thước cho 'bounds'
         this.bounds.set(x, y, desiredWidth, desiredHeight);
     }
 
-    @Override // Định nghĩa lại phương thức abstract từ lớp cha
+    @Override
     public void update(float delta) {
-        // Điều khiển paddle (logic giữ nguyên)
         if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.LEFT)) {
             bounds.x -= speed * delta;
         }
@@ -36,16 +28,52 @@ public class PaddleNormal extends Paddle {
             bounds.x += speed * delta;
         }
 
-        // Giới hạn (logic giữ nguyên)
-        if (bounds.x < 0) bounds.x = 0;
-        if (bounds.x + bounds.width > Gdx.graphics.getWidth())
-            bounds.x = Gdx.graphics.getWidth() - bounds.width;
+        float LEFT_WALL = 32f;
+        float RIGHT_WALL = 1008f;
+
+        if (bounds.x < LEFT_WALL) {
+            bounds.x = LEFT_WALL;
+        }
+        if (bounds.x + bounds.width > RIGHT_WALL) {
+            bounds.x = RIGHT_WALL - bounds.width;
+        }
     }
 
-
-    // Phương thức này là riêng của Paddle, nên giữ lại
     public void resetPosition() {
         bounds.x = (Gdx.graphics.getWidth() - bounds.width) / 2f;
-        bounds.y = 50; // khoảng cách từ đáy lên
+        bounds.y = 50;
+    }
+
+    // --- ĐÂY LÀ PHƯƠNG THỨC MỚI ĐƯỢC CHUYỂN VÀO ---
+    /**
+     * Kiểm tra va chạm giữa paddle (này) và quả bóng.
+     * @param ball Quả bóng để kiểm tra.
+     */
+    public void checkCollision(Ball ball) {
+        // Thay 'paddle.getBounds()' bằng 'this.getBounds()' (hoặc chỉ 'getBounds()')
+        if (ball.isActive() && ball.getVelocity().y < 0 && this.getBounds().overlaps(ball.getBounds())) {
+
+            float ballCenterX = ball.getX();
+            // Thay 'paddle.getX()' bằng 'this.getX()' (hoặc chỉ 'getX()')
+            float paddleCenterX = this.getX() + this.getWidth() / 2;
+            float hitPosition = ballCenterX - paddleCenterX;
+
+            // Thay 'paddle.getWidth()' bằng 'this.getWidth()'
+            float normalizedPosition = hitPosition / (this.getWidth() / 2);
+            normalizedPosition = Math.max(-1f, Math.min(1f, normalizedPosition));
+
+            float bounceAngle = normalizedPosition * MAX_BOUNCE_ANGLE_DEGREES;
+
+            float currentSpeed = ball.getSpeed();
+            double newAngleRad = Math.toRadians(90 - bounceAngle);
+
+            float newVx = (float) (currentSpeed * Math.cos(newAngleRad));
+            float newVy = (float) (currentSpeed * Math.sin(newAngleRad));
+            ball.setVelocity(newVx, newVy);
+
+            // Thay 'paddle.getY()' và 'paddle.getHeight()' bằng 'this'
+            float newBallY = this.getY() + this.getHeight() + ball.getRadius();
+            ball.setPosition(ball.getX(), newBallY);
+        }
     }
 }

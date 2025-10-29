@@ -9,8 +9,6 @@ import com.uet.arkanoid.ball.Ball;
 import com.uet.arkanoid.ball.NormalBall;
 import com.uet.arkanoid.brick.BrickManager;
 import com.uet.arkanoid.paddle.PaddleNormal;
-import com.uet.arkanoid.paddle.PaddleCollision;
-
 
 public class GameScreen {
     private final Main game;
@@ -19,7 +17,6 @@ public class GameScreen {
     private Ball ball;
     private PaddleNormal paddle;
     private BrickManager brickManager;
-    private PaddleCollision paddleCollision;
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
 
@@ -31,7 +28,6 @@ public class GameScreen {
     public void startNewGame(Difficulty difficulty) {
         background = new Texture(Gdx.files.internal("background.png"));
         paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
-        paddleCollision = new PaddleCollision();
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
         livesSystem = new Lives(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 70);
         brickManager = new BrickManager("Level1.tmx");
@@ -53,7 +49,7 @@ public class GameScreen {
         paddle.update(delta);
         ball.update(delta);
         brickManager.checkCollision(ball, scoreSystem);
-        paddleCollision.checkCollision(paddle, ball);
+        paddle.checkCollision(ball);
         checkWallCollision();
 
         scoreSystem.update(delta);
