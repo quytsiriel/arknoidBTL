@@ -21,6 +21,12 @@ public class GameScreen {
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
     private PlayerStateManager playerStateManager;
+    private boolean paused;
+    private Texture spaceToLaunchTexture;
+    private boolean waitingForLaunch = true;
+    private float launchTextTimer = 0f;
+
+
 
     public GameScreen(Main game) {
         this.game = game;
@@ -30,14 +36,14 @@ public class GameScreen {
     public void startNewGame() {
         background = new Texture(Gdx.files.internal("background.png"));
         paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
-        scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
+        scoreSystem = new ScoreSystem(1080, 580);
         livesSystem = new Lives(1070, 189);
         brickManager = new BrickManager("Level1.tmx");
-
+        spaceToLaunchTexture = new Texture(Gdx.files.internal("launching_text.png"));
 
         Texture ballTexture = new Texture(Gdx.files.internal("ball.png"));
         float ballSpeed = 500;
-        ball = new NormalBall((Gdx.graphics.getWidth() - 200)/ 2f, paddle.getY() + 30, 10, ballSpeed, ballTexture);
+        ball = new NormalBall((Gdx.graphics.getWidth() - 200) / 2f, paddle.getY() + 30, 10, ballSpeed, ballTexture);
 
         playerStateManager = new PlayerStateManager(ball, paddle, livesSystem, game);
     }
@@ -45,19 +51,38 @@ public class GameScreen {
     public void render() {
         ScreenUtils.clear(0, 0, 0, 1);
         float delta = Gdx.graphics.getDeltaTime();
+        ball.handleInput();
 
-        paddle.update(delta);
-        playerStateManager.update(delta);
-
-        if (ball.isActive()) {
-            ball.update(delta);
-            brickManager.checkCollision(ball, scoreSystem);
-            paddle.checkCollision(ball);
-            checkWallCollision();
+        if (waitingForLaunch) {
+            if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
+                waitingForLaunch = false;
+                ball.launch(90);
+            }
         }
 
-        scoreSystem.update(delta);
-        livesSystem.update(delta);
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+            game.pauseGame();
+            setPaused(true);
+            return;
+        }
+
+
+
+        if (!paused) {
+            scoreSystem.update(delta);
+            livesSystem.update(delta);
+            paddle.update(delta);
+            playerStateManager.update(delta);
+
+            if (ball.isActive()) {
+                ball.update(delta);
+                brickManager.checkCollision(ball, scoreSystem);
+                paddle.checkCollision(ball);
+                checkWallCollision();
+            }
+        }
+
+        launchTextTimer += Gdx.graphics.getDeltaTime();
 
         batch.begin();
         batch.draw(background, 0, 0);
@@ -66,7 +91,26 @@ public class GameScreen {
         ball.render(batch);
         scoreSystem.render(batch);
         livesSystem.render(batch);
+
+        if (!paused && ball.isWaitingForLaunch() && livesSystem.getCurrentLives() > 0) {
+
+            // hieu ung
+            float alpha = 0.5f + 0.5f * (float)Math.sin(launchTextTimer * 5f);
+
+            batch.setColor(1f, 1f, 1f, alpha);
+
+            float x = (Gdx.graphics.getWidth() - spaceToLaunchTexture.getWidth()) / 2f - 60;
+            float y = Gdx.graphics.getHeight() * 0.25f - 350;
+            batch.draw(spaceToLaunchTexture, x, y);
+
+            batch.setColor(1f, 1f, 1f, 1f);
+        }
+
         batch.end();
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 
     private void checkWallCollision() {
@@ -87,5 +131,6 @@ public class GameScreen {
         brickManager.dispose();
         scoreSystem.dispose();
         livesSystem.dispose();
+        spaceToLaunchTexture.dispose();
     }
 }

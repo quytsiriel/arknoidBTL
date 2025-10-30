@@ -30,9 +30,6 @@ public abstract class Brick {
 
     public float getX() { return bounds.x; }
     public float getY() { return bounds.y; }
-
     public boolean isDeleted() { return deleted; }
-
-    // ✅ Hàm abstract: mỗi loại gạch có cách phá riêng
     public abstract int destroy();
 }

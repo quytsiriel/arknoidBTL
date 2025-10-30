@@ -82,5 +82,6 @@ public class PlayerStateManager {
         float resetBallY = paddle.getY() + ballYOffset + 15;
 
         ball.reset(resetBallX, resetBallY);
+        ball.setWaitingForLaunch(true);
     }
 }

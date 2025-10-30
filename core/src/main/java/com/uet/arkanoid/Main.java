@@ -7,23 +7,27 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.uet.arkanoid.ui.Difficulty;
 import com.uet.arkanoid.ui.GameScreen;
 import com.uet.arkanoid.ui.MenuScreen;
+import com.uet.arkanoid.ui.PauseScreen;
 
 public class Main extends ApplicationAdapter {
 
     private enum GameState {
         MENU,
         PLAYING,
+        PAUSED,
         GAME_OVER
     }
 
     private GameState gameState;
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
+    private PauseScreen pauseScreen;
 
     @Override
     public void create() {
         menuScreen = new MenuScreen(this);
         gameScreen = new GameScreen(this);
+        pauseScreen = new PauseScreen(this);
         gameState = GameState.MENU;
     }
 
@@ -39,6 +43,10 @@ public class Main extends ApplicationAdapter {
             case PLAYING:
                 gameScreen.render();
                 break;
+            case PAUSED:
+                gameScreen.render();
+                pauseScreen.render();
+                break;
             case GAME_OVER:
                 // TODO: thêm GameOverScreen nếu muốn
                 break;
@@ -50,6 +58,15 @@ public class Main extends ApplicationAdapter {
         gameState = GameState.PLAYING;
     }
 
+    public void pauseGame() {
+        gameState = GameState.PAUSED;
+    }
+
+    public void resumeGame() {
+        gameState = GameState.PLAYING;
+        gameScreen.setPaused(false);
+    }
+
     public void returnToMenu() {
         gameState = GameState.MENU;
     }
@@ -58,5 +75,6 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         menuScreen.dispose();
         gameScreen.dispose();
+        pauseScreen.dispose();
     }
 }
