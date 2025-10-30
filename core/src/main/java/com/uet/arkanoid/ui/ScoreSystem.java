@@ -9,15 +9,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import java.util.ArrayList;
 
-/**
- * Class ScoreSystem - Quản lý và hiển thị điểm số với LibGDX
- */
 public class ScoreSystem implements Disposable {
     private int currentScore;
     private int highScore;
     private int combo;
     private int maxCombo;
-    private final int COMBO_TIMEOUT = 2000; // 2 giây
+    private final int COMBO_TIMEOUT = 2000;
     private long lastHitTime;
 
     // Vị trí hiển thị
@@ -55,13 +52,11 @@ public class ScoreSystem implements Disposable {
 
     private ArrayList<ScorePopup> scorePopups;
 
-    // Điểm cho các loại gạch
     public static final int NORMAL_BRICK = 10;
     public static final int HARD_BRICK = 20;
     public static final int SPECIAL_BRICK = 50;
     public static final int BONUS_BRICK = 100;
 
-    // Bonus điểm
     public static final int LEVEL_COMPLETE_BONUS = 1000;
     public static final int LIFE_BONUS = 500;
     public static final int PERFECT_CLEAR = 5000;
@@ -81,7 +76,7 @@ public class ScoreSystem implements Disposable {
         this.comboPosition = new Vector2(scoreX, scoreY - 40);
         this.scorePopups = new ArrayList<>();
 
-        // Khởi tạo fonts
+
         initFonts();
 
         layout = new GlyphLayout();
@@ -339,9 +334,6 @@ public class ScoreSystem implements Disposable {
         }
     }
 
-    /**
-     * Format điểm số
-     */
     private String getFormattedScore(int score) {
         return String.format("%08d", score);
     }
