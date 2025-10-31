@@ -171,19 +171,8 @@ public class Ball {
         this.texture = texture;
     }
 
-    public void setSize(float width, float height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    // Kiểm tra bóng có ra khỏi màn hình không
-    public boolean isOutOfBounds(float screenWidth, float screenHeight) {
-        return position.x < -radius || position.x > screenWidth + radius ||
-            position.y < -radius || position.y > screenHeight + radius;
-    }
-
     // Kiem tra bong ra khoi canh duoi
-    public boolean isFallenOffScreen(float screenHeight) {
+    public boolean isFallenOffScreen() {
         return position.y < -radius;
     }
 
@@ -204,13 +193,6 @@ public class Ball {
                 return false;
             }
         }
-        return true; // Bóng vẫn đang chơi bình thường
-    }
-
-    // Giải phóng tài nguyên
-    public void dispose() {
-        if (texture != null) {
-            texture.dispose();
-        }
+        return true;
     }
 }
