@@ -72,6 +72,7 @@ public class ScoreSystem implements Disposable {
         this.comboPosition = new Vector2(scoreX, scoreY - 40);
         this.scorePopups = new ArrayList<>();
 
+
         initFonts();
         layout = new GlyphLayout();
     }

@@ -27,7 +27,6 @@ public class GameScreen {
     private float launchTextTimer = 0f;
 
 
-
     public GameScreen(Main game) {
         this.game = game;
         batch = new SpriteBatch();
@@ -45,7 +44,9 @@ public class GameScreen {
         float ballSpeed = 500;
         ball = new NormalBall((Gdx.graphics.getWidth() - 200) / 2f, paddle.getY() + 30, 10, ballSpeed, ballTexture);
 
-        playerStateManager = new PlayerStateManager(ball, paddle, livesSystem, game);
+        playerStateManager = new PlayerStateManager(ball, paddle, livesSystem, scoreSystem, game);
+
+        scoreSystem.reset();
     }
 
     public void render() {
@@ -65,8 +66,6 @@ public class GameScreen {
             setPaused(true);
             return;
         }
-
-
 
         if (!paused) {
             scoreSystem.update(delta);
@@ -120,6 +119,9 @@ public class GameScreen {
             ball.reverseY();
         if (brickManager.isAllCleared()) {
             game.returnToMenu();
+        }
+        if (livesSystem.getCurrentLives() == 0) {
+            game.showGameOver(scoreSystem.getHighScore());
         }
     }
 
