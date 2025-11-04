@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import java.util.ArrayList;
@@ -86,21 +87,29 @@ public class ScoreSystem implements Disposable {
      * Khởi tạo các font
      */
     private void initFonts() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Pixeboy-z8XGD.ttf"));
+
         // Font cho điểm số chính
-        scoreFont = new BitmapFont();
-        scoreFont.getData().setScale(2.0f);
-        scoreFont.setColor(Color.WHITE);
+        FreeTypeFontGenerator.FreeTypeFontParameter scoreParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        scoreParam.size = 32;
+        scoreParam.color = Color.WHITE;
+        scoreFont = generator.generateFont(scoreParam);
 
         // Font cho combo
-        comboFont = new BitmapFont();
-        comboFont.getData().setScale(1.5f);
-        comboFont.setColor(Color.YELLOW);
+        FreeTypeFontGenerator.FreeTypeFontParameter comboParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        comboParam.size = 28;
+        comboParam.color = Color.YELLOW;
+        comboFont = generator.generateFont(comboParam);
 
-        // Font cho tiêu đề
-        titleFont = new BitmapFont();
-        titleFont.getData().setScale(1.2f);
-        titleFont.setColor(Color.LIGHT_GRAY);
+        // Font cho tiêu đề ("SCORE", "HIGH")
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParam.size = 26;
+        titleParam.color = Color.YELLOW;
+        titleFont = generator.generateFont(titleParam);
+
+        generator.dispose();
     }
+
 
     /**
      * Cập nhật logic
@@ -144,19 +153,15 @@ public class ScoreSystem implements Disposable {
      * @param batch SpriteBatch để vẽ
      */
     public void render(SpriteBatch batch) {
-        // Vẽ tiêu đề "SCORE"
         titleFont.draw(batch, "SCORE", scorePosition.x, scorePosition.y + 30);
 
-        // Vẽ điểm số
         String scoreText = getFormattedScore(displayScore);
         scoreFont.draw(batch, scoreText, scorePosition.x, scorePosition.y);
 
-        // Vẽ high score
-        titleFont.draw(batch, "HIGH", scorePosition.x + 200, scorePosition.y + 30);
+        titleFont.draw(batch, "HIGH", scorePosition.x , scorePosition.y - 30);
         scoreFont.draw(batch, getFormattedScore(highScore),
-            scorePosition.x + 200, scorePosition.y);
+            scorePosition.x , scorePosition.y - 60);
 
-        // Vẽ combo nếu có
         int currentCombo = getCombo();
         if (currentCombo > 1 || comboAlpha > 0) {
             Color originalColor = comboFont.getColor().cpy();
@@ -171,14 +176,13 @@ public class ScoreSystem implements Disposable {
             String comboText = currentCombo + "x COMBO!";
             layout.setText(comboFont, comboText);
             comboFont.draw(batch, comboText,
-                comboPosition.x - layout.width / 2,
-                comboPosition.y);
+                comboPosition.x - layout.width / 2 + 60,
+                comboPosition.y - 80);
 
             comboFont.getData().setScale(originalScaleX, originalScaleY);
             comboFont.setColor(originalColor);
         }
 
-        // Vẽ score popups
         for (ScorePopup popup : scorePopups) {
             Color originalColor = scoreFont.getColor().cpy();
             popup.color.a = popup.alpha;

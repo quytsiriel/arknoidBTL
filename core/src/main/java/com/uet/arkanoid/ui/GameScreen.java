@@ -45,7 +45,7 @@ public class GameScreen {
 
 
         // 1. Khởi tạo các hệ thống UI
-        scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
+        scoreSystem = new ScoreSystem(1080,  580);
         livesSystem = new Lives(1070, 189);
 
         spaceToLaunchTexture = new Texture(Gdx.files.internal("launching_text.png"));
