@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.uet.arkanoid.Main;
 import com.uet.arkanoid.ball.Ball;
-import com.uet.arkanoid.paddle.PaddleNormal;
+import com.uet.arkanoid.paddle.PaddleNormal; // Sử dụng lớp con PaddleNormal
 
 /**
  * Lớp này quản lý trạng thái của người chơi, bao gồm:
@@ -18,17 +18,16 @@ public class PlayerStateManager {
     private PaddleNormal paddle;
     private Lives livesSystem;
     private Main game; // Để quay về menu
-    private ScoreSystem scoreSystem;
+
     // Biến lưu vị trí Y của bóng so với paddle
     private float ballYOffset;
 
-    public PlayerStateManager(Ball ball, PaddleNormal paddle, Lives livesSystem, ScoreSystem scoreSystem, Main game)
-    {
+    public PlayerStateManager(Ball ball, PaddleNormal paddle, Lives livesSystem, Main game) {
         this.ball = ball;
         this.paddle = paddle;
         this.livesSystem = livesSystem;
         this.game = game;
-        this.scoreSystem = scoreSystem;
+
         // Tính toán offset một lần (dựa trên vị trí khởi tạo của bóng)
         this.ballYOffset = ball.getY() - paddle.getY();
 
@@ -65,13 +64,13 @@ public class PlayerStateManager {
      * Kiểm tra xem bóng có rơi ra khỏi màn hình không.
      */
     private void checkLifeLost() {
-        if (ball.getY() + ball.getRadius() < 0) {
+        if (ball.getY() < -ball.getRadius()) {
             boolean stillAlive = livesSystem.loseLife();
 
             if (stillAlive) {
                 resetForLaunch();
             } else {
-                game.showGameOver(scoreSystem.getHighScore());
+                game.returnToMenu();
             }
         }
     }
@@ -83,6 +82,5 @@ public class PlayerStateManager {
         float resetBallY = paddle.getY() + ballYOffset + 15;
 
         ball.reset(resetBallX, resetBallY);
-        ball.setWaitingForLaunch(true);
     }
 }

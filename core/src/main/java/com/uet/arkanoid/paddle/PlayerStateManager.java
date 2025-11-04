@@ -5,8 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.uet.arkanoid.Main;
 import com.uet.arkanoid.ball.Ball;
+import com.uet.arkanoid.paddle.PaddleNormal; // Sử dụng lớp con PaddleNormal
 import com.uet.arkanoid.ui.Lives;
-import com.uet.arkanoid.ui.ScoreSystem;
 
 /**
  * Lớp này quản lý trạng thái của người chơi, bao gồm:
@@ -24,7 +24,7 @@ public class PlayerStateManager {
     // Biến lưu vị trí Y của bóng so với paddle
     private float ballYOffset;
 
-    public PlayerStateManager(Ball ball, PaddleNormal paddle, Lives livesSystem, ScoreSystem scoreSystem, Main game) {
+    public PlayerStateManager(Ball ball, PaddleNormal paddle, Lives livesSystem, Main game) {
         this.ball = ball;
         this.paddle = paddle;
         this.livesSystem = livesSystem;
