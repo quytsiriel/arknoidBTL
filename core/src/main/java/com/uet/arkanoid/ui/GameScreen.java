@@ -24,12 +24,6 @@ public class GameScreen {
     private BrickManager brickManager;
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
-    private PlayerStateManager playerStateManager;
-    private boolean paused;
-    private Texture spaceToLaunchTexture;
-    private boolean waitingForLaunch = true;
-    private float launchTextTimer = 0f;
-
 
     public GameScreen(Main game) {
         this.game = game;
@@ -38,14 +32,9 @@ public class GameScreen {
 
     public void startNewGame() {
         background = new Texture(Gdx.files.internal("background.png"));
-        paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
-        scoreSystem = new ScoreSystem(1080, 580);
-        livesSystem = new Lives(1070, 189);
-        brickManager = new BrickManager("Level1.tmx");
-        spaceToLaunchTexture = new Texture(Gdx.files.internal("launching_text.png"));
 
         // 1. Khởi tạo các hệ thống UI
-        scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
+        scoreSystem = new ScoreSystem(1080, 580);
         livesSystem = new Lives(1070, 189);
 
         // 2. Khởi tạo Paddle
@@ -57,11 +46,7 @@ public class GameScreen {
         // 4. Khởi tạo BallManager
         Texture ballTexture = new Texture(Gdx.files.internal("ball.png"));
         float ballSpeed = 500;
-        ball = new NormalBall((Gdx.graphics.getWidth() - 200) / 2f, paddle.getY() + 30, 10, ballSpeed, ballTexture);
 
-        playerStateManager = new PlayerStateManager(ball, paddle, livesSystem, scoreSystem, game);
-
-        scoreSystem.reset();
         // Vị trí reset bóng (theo Paddle)
         float resetX = paddle.getX() + paddle.getWidth() / 2;
         float resetY = paddle.getY() + paddle.getHeight() + 10; // ban kinh la 10gg
@@ -77,20 +62,7 @@ public class GameScreen {
     public void render() {
         ScreenUtils.clear(0, 0, 0, 1);
         float delta = Gdx.graphics.getDeltaTime();
-        ball.handleInput();
 
-        if (waitingForLaunch) {
-            if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
-                waitingForLaunch = false;
-                ball.launch(90);
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
-            game.pauseGame();
-            setPaused(true);
-            return;
-        }
         // 1. Xử lý Input
         handleInput();
 
@@ -103,21 +75,8 @@ public class GameScreen {
         // BrickManager cập nhật vật phẩm rơi và va chạm (với paddle)
         brickManager.update(delta, paddle, livesSystem, ballManager);
 
-        if (!paused) {
-            scoreSystem.update(delta);
-            livesSystem.update(delta);
-            paddle.update(delta);
-            playerStateManager.update(delta);
-
-            if (ball.isActive()) {
-                ball.update(delta);
-                brickManager.checkCollision(ball, scoreSystem);
-                paddle.checkCollision(ball);
-                checkWallCollision();
-            }
-        }
-
-        launchTextTimer += Gdx.graphics.getDeltaTime();
+        scoreSystem.update(delta);
+        livesSystem.update(delta);
 
         // 3. Vẽ (Render)
         batch.begin();
@@ -127,21 +86,6 @@ public class GameScreen {
         ballManager.render(batch);  // Vẽ TẤT CẢ bóng
         scoreSystem.render(batch);
         livesSystem.render(batch);
-
-        if (!paused && ball.isWaitingForLaunch() && livesSystem.getCurrentLives() > 0) {
-
-            // hieu ung
-            float alpha = 0.5f + 0.5f * (float)Math.sin(launchTextTimer * 5f);
-
-            batch.setColor(1f, 1f, 1f, alpha);
-
-            float x = (Gdx.graphics.getWidth() - spaceToLaunchTexture.getWidth()) / 2f - 60;
-            float y = Gdx.graphics.getHeight() * 0.25f - 350;
-            batch.draw(spaceToLaunchTexture, x, y);
-
-            batch.setColor(1f, 1f, 1f, 1f);
-        }
-
         batch.end();
 
         // (Kiểm tra game over)
@@ -150,17 +94,6 @@ public class GameScreen {
         }
     }
 
-    public void setPaused(boolean paused) {
-        this.paused = paused;
-    }
-
-    private void checkWallCollision() {
-        if (ball.getX() - ball.getRadius() <= 32 || ball.getX() + ball.getRadius() >= 1008)
-            ball.reverseX();
-        if (ball.getY() + ball.getRadius() >= 778)
-            ball.reverseY();
-        if (brickManager.isAllCleared()) {
-            game.returnToMenu();
     /**
      * Xử lý input (ví dụ: phóng bóng)
      */
@@ -168,9 +101,6 @@ public class GameScreen {
         // Phóng bóng bằng phím Space
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             ballManager.launchFirstBall();
-        }
-        if (livesSystem.getCurrentLives() == 0) {
-            game.showGameOver(scoreSystem.getHighScore());
         }
     }
 
@@ -191,6 +121,5 @@ public class GameScreen {
         brickManager.dispose();
         scoreSystem.dispose();
         livesSystem.dispose();
-        spaceToLaunchTexture.dispose();
     }
 }

@@ -4,10 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.uet.arkanoid.ui.GameOverScreen;
 import com.uet.arkanoid.ui.GameScreen;
 import com.uet.arkanoid.ui.MenuScreen;
 import com.uet.arkanoid.ui.PauseScreen;
-import com.uet.arkanoid.ui.GameOverScreen;
 
 public class Main extends ApplicationAdapter {
 
@@ -59,24 +59,21 @@ public class Main extends ApplicationAdapter {
     }
 
     public void startGame() {
-        gameScreen = new GameScreen(this);
         gameScreen.startNewGame();
         gameState = GameState.PLAYING;
     }
-
     public void pauseGame() {
         gameState = GameState.PAUSED;
     }
-
     public void resumeGame() {
         gameState = GameState.PLAYING;
         gameScreen.setPaused(false);
     }
-
     public void showGameOver(int highScore) {
         gameOverScreen.showScore(highScore);
         gameState = GameState.GAME_OVER;
     }
+
 
     public void returnToMenu() {
         gameState = GameState.MENU;
@@ -86,6 +83,5 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         menuScreen.dispose();
         gameScreen.dispose();
-        pauseScreen.dispose();
     }
 }
