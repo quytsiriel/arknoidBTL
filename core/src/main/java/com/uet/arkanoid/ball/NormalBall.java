@@ -5,7 +5,6 @@ import com.uet.arkanoid.brick.Brick;
 
 /**
  * Lớp con triển khai quả bóng tiêu chuẩn.
- * BẮT BUỘC triển khai phương thức handleBrickCollision()
  */
 public class NormalBall extends Ball {
 
@@ -15,14 +14,5 @@ public class NormalBall extends Ball {
 
     public NormalBall(float x, float y, float radius, float speed, Texture texture) {
         super(x, y, radius, speed, texture);
-    }
-
-    public void handleBrickCollision(Brick brick) {
-        if (position.y > brick.getY() + 30f || position.y  < brick.getY()) {
-            getVelocity().y *= -1;
-        }
-        else if(position.x <= brick.getX() || position.x  >= brick.getX() + 80f) {
-            getVelocity().x *= -1;
-        }
     }
 }

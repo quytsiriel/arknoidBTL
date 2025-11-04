@@ -10,6 +10,7 @@ import com.uet.arkanoid.ball.NormalBall;
 import com.uet.arkanoid.brick.BrickManager;
 import com.uet.arkanoid.paddle.PaddleNormal;
 import com.uet.arkanoid.paddle.PlayerStateManager;
+import com.uet.arkanoid.ball.BallManager;
 
 public class GameScreen {
     private final Main game;
@@ -25,7 +26,7 @@ public class GameScreen {
     private Texture spaceToLaunchTexture;
     private boolean waitingForLaunch = true;
     private float launchTextTimer = 0f;
-
+    private BallManager ballManager;
 
     public GameScreen(Main game) {
         this.game = game;
@@ -128,7 +129,7 @@ public class GameScreen {
     public void dispose() {
         batch.dispose();
         background.dispose();
-        ball.dispose();
+        ballManager.dispose();
         paddle.dispose();
         brickManager.dispose();
         scoreSystem.dispose();

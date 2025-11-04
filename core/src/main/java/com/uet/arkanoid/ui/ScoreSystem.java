@@ -233,9 +233,6 @@ public class ScoreSystem implements Disposable {
         return combo;
     }
 
-    public int getMaxCombo() { return maxCombo; }
-    public void setHighScore(int highScore) { this.highScore = highScore; }
-
     public void reset() {
         currentScore = 0;
         displayScore = 0;
@@ -264,9 +261,10 @@ public class ScoreSystem implements Disposable {
     private String getFormattedScore(int score) {
         return String.format("%08d", score);
     }
-
     public String getFormattedScore() { return getFormattedScore(currentScore); }
     public String getFormattedHighScore() { return getFormattedScore(highScore); }
+    public int getMaxCombo() { return maxCombo; }
+    public void setHighScore(int highScore) { this.highScore = highScore; }
 
     @Override
     public void dispose() {
