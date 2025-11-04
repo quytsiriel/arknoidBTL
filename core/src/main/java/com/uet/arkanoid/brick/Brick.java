@@ -31,7 +31,6 @@ public abstract class Brick {
     public float getX() { return bounds.x; }
 
     public float getY() { return bounds.y; }
-    public boolean isDeleted() { return deleted; }
 
     public float getWidth() {
         return getBounds().getWidth();
