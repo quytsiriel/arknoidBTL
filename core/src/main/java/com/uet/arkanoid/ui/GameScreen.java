@@ -48,7 +48,7 @@ public class GameScreen {
         float ballSpeed = 500;
         // Vị trí reset bóng (theo Paddle)
         float resetX = paddle.getX() + paddle.getWidth() / 2;
-        float resetY = paddle.getY() + paddle.getHeight() + 10; // 10 là bán kính bóng
+        float resetY = paddle.getY() + paddle.getHeight() + 10; // ban kinh la 10gg
 
         ballManager = new BallManager(ballTexture, ballSpeed, resetX, resetY);
 

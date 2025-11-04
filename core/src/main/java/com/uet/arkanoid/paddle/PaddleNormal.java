@@ -16,7 +16,7 @@ public class PaddleNormal extends Paddle {
 
     public PaddleNormal(float x, float y) {
         super("paddle.png");
-        this.speed = 500f;
+        this.speed = 600f;
 
         float desiredWidth = 130;
         float aspectRatio = (float) texture.getHeight() / texture.getWidth();
@@ -89,9 +89,9 @@ public class PaddleNormal extends Paddle {
         if (!expanded) {
             bounds.width = MAX_WIDTH;
             expanded = true;
-            expandTimer = 10f;
+            expandTimer = 30f;
         } else {
-            expandTimer = 10f;
+            expandTimer = 30f;
         }
 
         // tránh vượt khỏi màn hình
