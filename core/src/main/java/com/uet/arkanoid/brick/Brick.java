@@ -29,18 +29,7 @@ public abstract class Brick {
     }
 
     public float getX() { return bounds.x; }
-
     public float getY() { return bounds.y; }
-
-    public float getWidth() {
-        return getBounds().getWidth();
-    }
-
-    public float getHeight() {
-        return getBounds().getHeight();
-    }
-
     public boolean isDeleted() { return deleted; }
-
     public abstract int destroy();
 }

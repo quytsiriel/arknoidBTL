@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import java.util.ArrayList;
 
 public class ScoreSystem implements Disposable {
@@ -30,7 +31,7 @@ public class ScoreSystem implements Disposable {
     // Animation
     private float comboScale = 1.0f;
     private float comboAlpha = 1.0f;
-    private int displayScore = 0; // Điểm hiển thị (tăng dần)
+    private int displayScore = 0;
     private final float SCORE_ANIMATION_SPEED = 50f;
 
     // Popup điểm
@@ -61,11 +62,6 @@ public class ScoreSystem implements Disposable {
     public static final int LIFE_BONUS = 500;
     public static final int PERFECT_CLEAR = 5000;
 
-    /**
-     * Constructor
-     * @param scoreX Vị trí x hiển thị điểm
-     * @param scoreY Vị trí y hiển thị điểm
-     */
     public ScoreSystem(float scoreX, float scoreY) {
         this.currentScore = 0;
         this.highScore = 0;
@@ -78,45 +74,40 @@ public class ScoreSystem implements Disposable {
 
 
         initFonts();
-
         layout = new GlyphLayout();
     }
 
-    /**
-     * Khởi tạo các font
-     */
     private void initFonts() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Pixeboy-z8XGD.ttf"));
+
         // Font cho điểm số chính
-        scoreFont = new BitmapFont();
-        scoreFont.getData().setScale(2.0f);
-        scoreFont.setColor(Color.WHITE);
+        FreeTypeFontGenerator.FreeTypeFontParameter scoreParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        scoreParam.size = 32;
+        scoreParam.color = Color.WHITE;
+        scoreFont = generator.generateFont(scoreParam);
 
         // Font cho combo
-        comboFont = new BitmapFont();
-        comboFont.getData().setScale(1.5f);
-        comboFont.setColor(Color.YELLOW);
+        FreeTypeFontGenerator.FreeTypeFontParameter comboParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        comboParam.size = 28;
+        comboParam.color = Color.YELLOW;
+        comboFont = generator.generateFont(comboParam);
 
-        // Font cho tiêu đề
-        titleFont = new BitmapFont();
-        titleFont.getData().setScale(1.2f);
-        titleFont.setColor(Color.LIGHT_GRAY);
+        // Font cho tiêu đề ("SCORE", "HIGH")
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParam.size = 26;
+        titleParam.color = Color.YELLOW;
+        titleFont = generator.generateFont(titleParam);
+
+        generator.dispose();
     }
 
-    /**
-     * Cập nhật logic
-     * @param delta Delta time
-     */
     public void update(float delta) {
-        // Animate điểm số tăng dần
         if (displayScore < currentScore) {
             displayScore += (int)(SCORE_ANIMATION_SPEED * delta *
                 Math.max(1, (currentScore - displayScore) / 100));
-            if (displayScore > currentScore) {
-                displayScore = currentScore;
-            }
+            if (displayScore > currentScore) displayScore = currentScore;
         }
 
-        // Animate combo
         int currentCombo = getCombo();
         if (currentCombo > 1) {
             comboScale = 1.0f + (float)Math.sin(Gdx.graphics.getFrameId() * 0.1f) * 0.1f;
@@ -126,37 +117,25 @@ public class ScoreSystem implements Disposable {
             comboAlpha = Math.max(0, comboAlpha - delta * 2);
         }
 
-        // Cập nhật popup điểm
         for (int i = scorePopups.size() - 1; i >= 0; i--) {
             ScorePopup popup = scorePopups.get(i);
             popup.lifetime += delta;
-            popup.position.y += 50 * delta; // Di chuyển lên
+            popup.position.y += 50 * delta;
             popup.alpha = Math.max(0, 1.0f - popup.lifetime / 1.5f);
-
-            if (popup.lifetime >= 1.5f) {
-                scorePopups.remove(i);
-            }
+            if (popup.lifetime >= 1.5f) scorePopups.remove(i);
         }
     }
 
-    /**
-     * Render điểm số
-     * @param batch SpriteBatch để vẽ
-     */
     public void render(SpriteBatch batch) {
-        // Vẽ tiêu đề "SCORE"
         titleFont.draw(batch, "SCORE", scorePosition.x, scorePosition.y + 30);
 
-        // Vẽ điểm số
         String scoreText = getFormattedScore(displayScore);
         scoreFont.draw(batch, scoreText, scorePosition.x, scorePosition.y);
 
-        // Vẽ high score
-        titleFont.draw(batch, "HIGH", scorePosition.x + 200, scorePosition.y + 30);
+        titleFont.draw(batch, "HIGH", scorePosition.x , scorePosition.y - 30);
         scoreFont.draw(batch, getFormattedScore(highScore),
-            scorePosition.x + 200, scorePosition.y);
+            scorePosition.x , scorePosition.y - 60);
 
-        // Vẽ combo nếu có
         int currentCombo = getCombo();
         if (currentCombo > 1 || comboAlpha > 0) {
             Color originalColor = comboFont.getColor().cpy();
@@ -171,14 +150,13 @@ public class ScoreSystem implements Disposable {
             String comboText = currentCombo + "x COMBO!";
             layout.setText(comboFont, comboText);
             comboFont.draw(batch, comboText,
-                comboPosition.x - layout.width / 2,
-                comboPosition.y);
+                comboPosition.x - layout.width / 2 + 60,
+                comboPosition.y - 80);
 
             comboFont.getData().setScale(originalScaleX, originalScaleY);
             comboFont.setColor(originalColor);
         }
 
-        // Vẽ score popups
         for (ScorePopup popup : scorePopups) {
             Color originalColor = scoreFont.getColor().cpy();
             popup.color.a = popup.alpha;
@@ -188,9 +166,6 @@ public class ScoreSystem implements Disposable {
         }
     }
 
-    /**
-     * Lấy màu combo dựa vào độ lớn
-     */
     private Color getComboColor(int combo) {
         if (combo >= 10) return Color.PURPLE;
         if (combo >= 7) return Color.RED;
@@ -199,61 +174,36 @@ public class ScoreSystem implements Disposable {
         return Color.WHITE;
     }
 
-    /**
-     * Thêm điểm khi phá gạch
-     * @param brickValue Giá trị điểm của gạch
-     * @param position Vị trí gạch (để hiển thị popup)
-     */
     public void addScore(int brickValue, Vector2 position) {
         long currentTime = System.currentTimeMillis();
 
-        // Kiểm tra combo
-        if (currentTime - lastHitTime <= COMBO_TIMEOUT && combo > 0) {
-            combo++;
-        } else {
-            combo = 1;
-        }
+        if (currentTime - lastHitTime <= COMBO_TIMEOUT && combo > 0) combo++;
+        else combo = 1;
 
-        if (combo > maxCombo) {
-            maxCombo = combo;
-        }
+        if (combo > maxCombo) maxCombo = combo;
 
-        // Tính điểm với combo
         int multiplier = getComboMultiplier();
         int scoreToAdd = brickValue * multiplier;
         currentScore += scoreToAdd;
 
-        if (currentScore > highScore) {
-            highScore = currentScore;
-        }
+        if (currentScore > highScore) highScore = currentScore;
 
-        // Tạo popup điểm
         if (position != null) {
             String popupText = "+" + scoreToAdd;
-            if (multiplier > 1) {
-                popupText += " (x" + multiplier + ")";
-            }
+            if (multiplier > 1) popupText += " (x" + multiplier + ")";
             scorePopups.add(new ScorePopup(popupText, position, getComboColor(combo)));
         }
 
         lastHitTime = currentTime;
     }
 
-    /**
-     * Overload không cần vị trí
-     */
     public void addScore(int brickValue) {
         addScore(brickValue, null);
     }
 
-    /**
-     * Thêm điểm thưởng
-     */
     public void addBonusScore(int bonusPoints, String text, Vector2 position) {
         currentScore += bonusPoints;
-        if (currentScore > highScore) {
-            highScore = currentScore;
-        }
+        if (currentScore > highScore) highScore = currentScore;
 
         if (position != null && text != null) {
             scorePopups.add(new ScorePopup(text + " +" + bonusPoints,
@@ -261,9 +211,6 @@ public class ScoreSystem implements Disposable {
         }
     }
 
-    /**
-     * Tính hệ số nhân combo
-     */
     private int getComboMultiplier() {
         if (combo >= 10) return 5;
         if (combo >= 7) return 4;
@@ -272,36 +219,18 @@ public class ScoreSystem implements Disposable {
         return 1;
     }
 
-    /**
-     * Reset combo
-     */
     public void resetCombo() {
         combo = 0;
         lastHitTime = 0;
     }
 
-    public int getCurrentScore() {
-        return currentScore;
-    }
-
-    public int getHighScore() {
-        return highScore;
-    }
+    public int getCurrentScore() { return currentScore; }
+    public int getHighScore() { return highScore; }
 
     public int getCombo() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastHitTime > COMBO_TIMEOUT) {
-            combo = 0;
-        }
+        if (currentTime - lastHitTime > COMBO_TIMEOUT) combo = 0;
         return combo;
-    }
-
-    public int getMaxCombo() {
-        return maxCombo;
-    }
-
-    public void setHighScore(int highScore) {
-        this.highScore = highScore;
     }
 
     public void reset() {
@@ -318,17 +247,12 @@ public class ScoreSystem implements Disposable {
         comboPosition.set(x, y - 40);
     }
 
-    /**
-     * Tính điểm hoàn thành màn
-     */
     public void calculateLevelBonus(int remainingLives, boolean isPerfect, Vector2 position) {
         addBonusScore(LEVEL_COMPLETE_BONUS, "LEVEL COMPLETE", position);
-
         if (remainingLives > 0) {
             addBonusScore(remainingLives * LIFE_BONUS,
                 remainingLives + " LIVES", position);
         }
-
         if (isPerfect) {
             addBonusScore(PERFECT_CLEAR, "PERFECT!", position);
         }
@@ -337,14 +261,10 @@ public class ScoreSystem implements Disposable {
     private String getFormattedScore(int score) {
         return String.format("%08d", score);
     }
-
-    public String getFormattedScore() {
-        return getFormattedScore(currentScore);
-    }
-
-    public String getFormattedHighScore() {
-        return getFormattedScore(highScore);
-    }
+    public String getFormattedScore() { return getFormattedScore(currentScore); }
+    public String getFormattedHighScore() { return getFormattedScore(highScore); }
+    public int getMaxCombo() { return maxCombo; }
+    public void setHighScore(int highScore) { this.highScore = highScore; }
 
     @Override
     public void dispose() {
