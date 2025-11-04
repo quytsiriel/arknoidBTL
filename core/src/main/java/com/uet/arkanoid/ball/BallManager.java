@@ -164,7 +164,7 @@ public class BallManager {
         if (ball.getX() - ball.getRadius() <= LEFT_WALL || ball.getX() + ball.getRadius() >= RIGHT_WALL) {
             ball.reverseX();
         }
-        if (ball.getY() + ball.getRadius() >= TOP_WALL) {
+        if (ball.getY() + ball.getRadius() >= TOP_WALL ) {
             ball.reverseY();
         }
     }
@@ -174,7 +174,7 @@ public class BallManager {
      */
     public void launchFirstBall() {
         if(balls.size > 0 && !balls.get(0).isActive()) {
-            balls.get(0).launch(90);
+            balls.get(0).launch(85);
         }
     }
 
