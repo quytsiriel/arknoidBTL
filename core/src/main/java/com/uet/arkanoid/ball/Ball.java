@@ -204,7 +204,7 @@ public class Ball {
     }
 
     // Kiem tra bong ra khoi canh duoi
-    public boolean isFallenOffScreen(float screenHeight) {
+    public boolean isFallenOffScreen() {
         return position.y < -radius;
     }
 
@@ -225,13 +225,6 @@ public class Ball {
                 return false;
             }
         }
-        return true; // Bóng vẫn đang chơi bình thường
-    }
-
-    // Giải phóng tài nguyên
-    public void dispose() {
-        if (texture != null) {
-            texture.dispose();
-        }
+        return true;
     }
 }
