@@ -9,6 +9,7 @@ import com.uet.arkanoid.paddle.PaddleNormal;
 import com.uet.arkanoid.ui.Lives;
 import com.uet.arkanoid.ui.ScoreSystem;
 
+
 /**
  * Lớp này quản lý TẤT CẢ các quả bóng đang hoạt động trong game.
  */

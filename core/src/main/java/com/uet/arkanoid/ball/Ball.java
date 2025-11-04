@@ -17,6 +17,7 @@ public class Ball {
     public float speed;           // Tốc độ cơ bản
     private boolean active;        // Trạng thái hoạt động
     private Rectangle bounds;      // Hình chữ nhật bao quanh (cho collision)
+    private boolean waitingForLaunch = true;
 
     // Constructor
     public Ball(float x, float y, float radius, float speed, Texture texture) {
@@ -29,6 +30,7 @@ public class Ball {
         this.height = radius * 2;
         this.active = false;
         this.bounds = new Rectangle(x - radius, y - radius, width, height);
+        this.waitingForLaunch = true;
     }
 
     // Constructor (để thêm ảnh quả bóng)
@@ -87,6 +89,14 @@ public class Ball {
         else if(position.x <= brick.getX() || position.x  >= brick.getX() + 80f) {
             velocity.x *= -1;
         }
+    }
+
+    public boolean isWaitingForLaunch() {
+        return waitingForLaunch;
+    }
+
+    public void setWaitingForLaunch(boolean waiting) {
+        this.waitingForLaunch = waiting;
     }
 
     // Reset bóng về vị trí ban đầu

@@ -12,6 +12,7 @@ import com.uet.arkanoid.ball.NormalBall;
 import com.uet.arkanoid.brick.BrickManager;
 import com.uet.arkanoid.paddle.Paddle;
 import com.uet.arkanoid.paddle.PaddleNormal;
+import com.uet.arkanoid.ui.PlayerStateManager;
 
 public class GameScreen {
     private final Main game;
@@ -24,10 +25,20 @@ public class GameScreen {
     private BrickManager brickManager;
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
+    private PlayerStateManager playerStateManager;
+    private Texture spaceToLaunchTexture;
+    private Ball ball;
+    private boolean waitingForLaunch = true;
+    private float launchTextTimer = 0f;
+    private boolean paused;
 
     public GameScreen(Main game) {
         this.game = game;
         batch = new SpriteBatch();
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 
     public void startNewGame() {
@@ -37,6 +48,7 @@ public class GameScreen {
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
         livesSystem = new Lives(1070, 189);
 
+        spaceToLaunchTexture = new Texture(Gdx.files.internal("launching_text.png"));
         // 2. Khởi tạo Paddle
         paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
 
@@ -62,6 +74,19 @@ public class GameScreen {
         ScreenUtils.clear(0, 0, 0, 1);
         float delta = Gdx.graphics.getDeltaTime();
 
+        if (waitingForLaunch) {
+            if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
+                waitingForLaunch = false;
+                ball.launch(90);
+            }
+        }
+
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+            game.pauseGame();
+            setPaused(true);
+            return;
+        }
+
         // 1. Xử lý Input
         handleInput();
 
@@ -85,6 +110,21 @@ public class GameScreen {
         ballManager.render(batch);  // Vẽ TẤT CẢ bóng
         scoreSystem.render(batch);
         livesSystem.render(batch);
+
+        if (!paused && ball.isWaitingForLaunch() && livesSystem.getCurrentLives() > 0) {
+
+            // hieu ung
+            float alpha = 0.5f + 0.5f * (float)Math.sin(launchTextTimer * 5f);
+
+            batch.setColor(1f, 1f, 1f, alpha);
+
+            float x = (Gdx.graphics.getWidth() - spaceToLaunchTexture.getWidth()) / 2f - 60;
+            float y = Gdx.graphics.getHeight() * 0.25f - 350;
+            batch.draw(spaceToLaunchTexture, x, y);
+
+            batch.setColor(1f, 1f, 1f, 1f);
+        }
+
         batch.end();
 
         // (Kiểm tra game over)
