@@ -46,7 +46,7 @@ public class GameScreenTwoPlayer {
         background = new Texture(Gdx.files.internal("background.png"));
         spaceToLaunchTexture = new Texture(Gdx.files.internal("launching_text.png"));
 
-        scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
+        scoreSystem = new ScoreSystem(1080, 580);
         livesSystem = new Lives(1070, 189);
 
         // Paddle 1 (trái) - điều khiển bằng A/D
