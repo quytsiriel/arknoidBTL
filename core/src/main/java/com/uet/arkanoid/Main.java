@@ -4,32 +4,26 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.uet.arkanoid.ui.Difficulty;
 import com.uet.arkanoid.ui.GameScreen;
 import com.uet.arkanoid.ui.MenuScreen;
-import com.uet.arkanoid.ui.PauseScreen;
-import com.uet.arkanoid.ui.GameOverScreen;
 
 public class Main extends ApplicationAdapter {
 
     private enum GameState {
         MENU,
         PLAYING,
-        PAUSED,
         GAME_OVER
     }
 
     private GameState gameState;
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
-    private PauseScreen pauseScreen;
-    private GameOverScreen gameOverScreen;
 
     @Override
     public void create() {
         menuScreen = new MenuScreen(this);
         gameScreen = new GameScreen(this);
-        pauseScreen = new PauseScreen(this);
-        gameOverScreen = new GameOverScreen(this);
         gameState = GameState.MENU;
     }
 
@@ -45,37 +39,15 @@ public class Main extends ApplicationAdapter {
             case PLAYING:
                 gameScreen.render();
                 break;
-            case PAUSED:
-                gameScreen.render();
-                pauseScreen.render();
-                break;
             case GAME_OVER:
-                gameScreen.setPaused(true);
-                gameScreen.render();
-                gameOverScreen.render();
+                // TODO: thêm GameOverScreen nếu muốn
                 break;
-
         }
     }
 
     public void startGame() {
-        gameScreen = new GameScreen(this);
         gameScreen.startNewGame();
         gameState = GameState.PLAYING;
-    }
-
-    public void pauseGame() {
-        gameState = GameState.PAUSED;
-    }
-
-    public void resumeGame() {
-        gameState = GameState.PLAYING;
-        gameScreen.setPaused(false);
-    }
-
-    public void showGameOver(int highScore) {
-        gameOverScreen.showScore(highScore);
-        gameState = GameState.GAME_OVER;
     }
 
     public void returnToMenu() {
@@ -86,6 +58,5 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         menuScreen.dispose();
         gameScreen.dispose();
-        pauseScreen.dispose();
     }
 }
