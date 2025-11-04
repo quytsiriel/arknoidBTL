@@ -10,7 +10,7 @@
     import com.uet.arkanoid.ui.Lives;
     import com.uet.arkanoid.ui.ScoreSystem;
 
-
+    // 1
     /**
      * Lớp này quản lý TẤT CẢ các quả bóng đang hoạt động trong game.
      */
