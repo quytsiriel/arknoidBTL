@@ -1,4 +1,4 @@
-package com.uet.arkanoid.level;
+package com.uet.arkanoid.brick;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;

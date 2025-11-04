@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import com.uet.arkanoid.ball.Ball;
 import com.uet.arkanoid.ball.BallManager;
-import com.uet.arkanoid.level.LevelLoader;
+import com.uet.arkanoid.brick.LevelLoader;
 import com.uet.arkanoid.paddle.Paddle;
 import com.uet.arkanoid.ui.Lives;
 import com.uet.arkanoid.ui.ScoreSystem;

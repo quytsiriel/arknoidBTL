@@ -28,7 +28,6 @@ public class GameScreen {
     private PlayerStateManager playerStateManager;
     private Texture spaceToLaunchTexture;
     private Ball ball;
-    private boolean waitingForLaunch = true;
     private float launchTextTimer = 0f;
     private boolean paused;
 
@@ -43,6 +42,7 @@ public class GameScreen {
 
     public void startNewGame() {
         background = new Texture(Gdx.files.internal("background.png"));
+
 
         // 1. Khởi tạo các hệ thống UI
         scoreSystem = new ScoreSystem(50, Gdx.graphics.getHeight() - 50);
@@ -62,10 +62,11 @@ public class GameScreen {
         float resetX = paddle.getX() + paddle.getWidth() / 2;
         float resetY = paddle.getY() + paddle.getHeight() + 10; // ban kinh la 10gg
 
-        ballManager = new BallManager(ballTexture, ballSpeed, resetX, resetY);
+        ballManager = new BallManager(ballTexture, ballSpeed, game,resetX, resetY);
 
         // Tạo quả bóng đầu tiên và thêm vào Manager
         Ball initialBall = new NormalBall(resetX, resetY, 10, ballSpeed, ballTexture);
+        this.ball = initialBall;
         initialBall.setActive(false); // Chờ phóng
         ballManager.addBall(initialBall);
     }
@@ -73,13 +74,7 @@ public class GameScreen {
     public void render() {
         ScreenUtils.clear(0, 0, 0, 1);
         float delta = Gdx.graphics.getDeltaTime();
-
-        if (waitingForLaunch) {
-            if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
-                waitingForLaunch = false;
-                ball.launch(90);
-            }
-        }
+        launchTextTimer += delta;
 
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
             game.pauseGame();
@@ -160,5 +155,6 @@ public class GameScreen {
         brickManager.dispose();
         scoreSystem.dispose();
         livesSystem.dispose();
+        spaceToLaunchTexture.dispose();
     }
 }
