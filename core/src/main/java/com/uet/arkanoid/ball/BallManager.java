@@ -3,12 +3,14 @@ package com.uet.arkanoid.ball;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.uet.arkanoid.Main;
 import com.uet.arkanoid.brick.BrickManager;
 import com.uet.arkanoid.paddle.Paddle;
 import com.uet.arkanoid.paddle.PaddleNormal;
 import com.uet.arkanoid.ui.Lives;
 import com.uet.arkanoid.ui.ScoreSystem;
 
+// 1
 /**
  * Lớp này quản lý TẤT CẢ các quả bóng đang hoạt động trong game.
  */
@@ -17,6 +19,10 @@ public class BallManager {
     private Array<Ball> balls = new Array<>();
     private Texture ballTexture;
     private float initialBallSpeed;
+    private final Main game;
+    private BrickManager brickManager;
+    private ScoreSystem scoreSystem;
+    private Lives livesSystem;
 
     // Biến để reset bóng
     private float resetX, resetY;
@@ -26,11 +32,12 @@ public class BallManager {
 
     private Array<Ball> newBallsQueue = new Array<>();
 
-    public BallManager(Texture ballTexture, float initialBallSpeed, float resetX, float resetY) {
+    public BallManager(Texture ballTexture, float initialBallSpeed, Main game, float resetX, float resetY) {
         this.ballTexture = ballTexture;
         this.initialBallSpeed = initialBallSpeed;
         this.resetX = resetX;
         this.resetY = resetY;
+        this.game = game;
     }
 
     /**
@@ -82,41 +89,96 @@ public class BallManager {
     }
 
     /**
-     * Cập nhật TẤT CẢ các quả bóng và xử lý va chạm, mất mạng.
+     * Cập nhật TẤT CẢ các quả bóng và xử lý va chạm, mất mạng 2 người chơi.
      */
-    public void update(float delta, Paddle paddle, BrickManager brickManager, ScoreSystem scoreSystem, Lives lives) {
-        lifeLostThisFrame = false;
+    public void update(float delta, Paddle paddle1, Paddle paddle2,
+                       BrickManager brickManager, ScoreSystem scoreSystem, Lives lives) {
 
-        // Lặp ngược để có thể xóa bóng một cách an toàn
+        lifeLostThisFrame = false;
+        this.brickManager = brickManager;
+        this.scoreSystem = scoreSystem;
+        this.livesSystem = lives;
+
         for (int i = balls.size - 1; i >= 0; i--) {
             Ball ball = balls.get(i);
 
             if (ball.isActive()) {
                 ball.update(delta);
 
-                // 1. Kiểm tra va chạm gạch (và sinh PowerUp)
+                // ✅ Va chạm với gạch
                 brickManager.checkCollision(ball, scoreSystem);
 
-                // 2. Kiểm tra va chạm Paddle
-                ((PaddleNormal) paddle).checkCollision(ball);
+                // ✅ Va chạm Paddle 1
+                ((PaddleNormal) paddle1).checkCollision(ball);
 
-                // 3. Kiểm tra va chạm tường
+                // ✅ Va chạm Paddle 2
+                ((PaddleNormal) paddle2).checkCollision(ball);
+
+                // ✅ Va chạm tường
                 checkWallCollision(ball);
 
-                // 4. Kiểm tra rơi ra ngoài
+                // ✅ Bóng rơi ra ngoài
                 if (ball.isFallenOffScreen()) {
                     ball.setActive(false);
-                    balls.removeIndex(i); // Xóa bóng này khỏi danh sách
+                    balls.removeIndex(i);
                 }
             } else {
-                // Cập nhật vị trí của nó theo Paddle
-                ball.setPosition(paddle.getX() + paddle.getWidth()/2, paddle.getY() + paddle.getHeight() + ball.getRadius());
+                // ✅ Bóng đang chờ phóng → nằm trên paddle 1
+                ball.setPosition(
+                    paddle1.getX() + paddle1.getWidth() / 2,
+                    paddle1.getY() + paddle1.getHeight() + ball.getRadius()
+                );
             }
         }
 
-        // SAU KHI lặp hết: Kiểm tra xem có còn bóng nào không
+        // ✅ Nếu hết bóng → trừ mạng
         if (balls.size == 0 && !lifeLostThisFrame) {
-            // Không còn bóng nào trên màn hình -> Mất mạng
+            handleLifeLoss(lives);
+        }
+    }
+
+    /**
+     * Hàm update cũ dùng cho chế độ 1 người chơi
+     */
+    public void update(float delta, Paddle paddle,
+                       BrickManager brickManager, ScoreSystem scoreSystem, Lives lives) {
+
+        lifeLostThisFrame = false;
+        this.brickManager = brickManager;
+        this.scoreSystem = scoreSystem;
+        this.livesSystem = lives;
+
+        for (int i = balls.size - 1; i >= 0; i--) {
+            Ball ball = balls.get(i);
+
+            if (ball.isActive()) {
+                ball.update(delta);
+
+                // Va chạm gạch
+                brickManager.checkCollision(ball, scoreSystem);
+
+                // Va chạm paddle
+                ((PaddleNormal) paddle).checkCollision(ball);
+
+                // Va chạm tường
+                checkWallCollision(ball);
+
+                // Rơi ra ngoài -> mất mạng
+                if (ball.isFallenOffScreen()) {
+                    ball.setActive(false);
+                    balls.removeIndex(i);
+                }
+            } else {
+                // Bóng đang chờ phóng → nằm trên paddle
+                ball.setPosition(
+                    paddle.getX() + paddle.getWidth() / 2,
+                    paddle.getY() + paddle.getHeight() + ball.getRadius()
+                );
+            }
+        }
+
+        // Nếu hết bóng → trừ mạng
+        if (balls.size == 0 && !lifeLostThisFrame) {
             handleLifeLoss(lives);
         }
     }
@@ -166,6 +228,12 @@ public class BallManager {
         }
         if (ball.getY() + ball.getRadius() >= TOP_WALL ) {
             ball.reverseY();
+        }
+        if (brickManager.isAllCleared()) {
+            game.returnToMenu();
+        }
+        if (livesSystem.getCurrentLives() == 0) {
+            game.showGameOver(scoreSystem.getHighScore());
         }
     }
 

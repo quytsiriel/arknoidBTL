@@ -23,7 +23,6 @@ public class GameOverScreen {
     private Rectangle backButtonBounds;
     private float frameX, frameY, frameWidth, frameHeight;
 
-    private BitmapFont titleFont;
     private BitmapFont scoreFont;
     private BitmapFont buttonFont;
 

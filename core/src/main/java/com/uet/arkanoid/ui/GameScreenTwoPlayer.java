@@ -10,30 +10,31 @@ import com.uet.arkanoid.ball.Ball;
 import com.uet.arkanoid.ball.BallManager;
 import com.uet.arkanoid.ball.NormalBall;
 import com.uet.arkanoid.brick.BrickManager;
-import com.uet.arkanoid.paddle.Paddle;
 import com.uet.arkanoid.paddle.PaddleNormal;
-import com.uet.arkanoid.ui.PlayerStateManager;
 
-public class GameScreen {
+public class GameScreenTwoPlayer {
     private final Main game;
     private final SpriteBatch batch;
     private Texture background;
 
-    // Các trình quản lý (Managers)
-    private BallManager ballManager;
-    private PaddleNormal paddle; // (Paddle có thể coi là một Manager)
+    private PaddleNormal paddle1;
+    private PaddleNormal paddle2;
     private BrickManager brickManager;
+    private BallManager ballManager;
     private ScoreSystem scoreSystem;
     private Lives livesSystem;
-    private PlayerStateManager playerStateManager;
+
     private Texture spaceToLaunchTexture;
     private Ball ball;
-    private float launchTextTimer = 0f;
     private boolean paused;
 
-    public GameScreen(Main game) {
+    public GameScreenTwoPlayer(Main game) {
         this.game = game;
         batch = new SpriteBatch();
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     public void setPaused(boolean paused) {
@@ -42,100 +43,86 @@ public class GameScreen {
 
     public void startNewGame(String level) {
         background = new Texture(Gdx.files.internal("background.png"));
+        spaceToLaunchTexture = new Texture(Gdx.files.internal("launching_text.png"));
 
-
-        // 1. Khởi tạo các hệ thống UI
-        scoreSystem = new ScoreSystem(1080,  580);
+        scoreSystem = new ScoreSystem(1080, 580);
         livesSystem = new Lives(1070, 189);
-        // 2. Khởi tạo Paddle
-        paddle = new PaddleNormal((Gdx.graphics.getWidth() - 128) / 2f, 50);
 
-        // 3. Khởi tạo BrickManager
+        // Paddle 1 (trái) - điều khiển bằng A/D
+        paddle1 = new PaddleNormal(200, 50, Input.Keys.A, Input.Keys.D);
+
+        // Paddle 2 (phải) - điều khiển bằng LEFT/RIGHT
+        paddle2 = new PaddleNormal(Gdx.graphics.getWidth() - 328, 50, Input.Keys.LEFT, Input.Keys.RIGHT);
+
+        // BrickManager và BallManager như cũ
         brickManager = new BrickManager(level);
 
-        // 4. Khởi tạo BallManager
         Texture ballTexture = new Texture(Gdx.files.internal("ball.png"));
         float ballSpeed = 500;
-        // Vị trí reset bóng (theo Paddle)
-        float resetX = paddle.getX() + paddle.getWidth() / 2;
-        float resetY = paddle.getY() + paddle.getHeight() + 10; // ban kinh la 10gg
 
-        ballManager = new BallManager(ballTexture, ballSpeed, game,resetX, resetY);
+        float resetX = Gdx.graphics.getWidth() / 2f;
+        float resetY = paddle1.getY() + paddle1.getHeight() + 10;
 
-        // Tạo quả bóng đầu tiên và thêm vào Manager
+        ballManager = new BallManager(ballTexture, ballSpeed, game, resetX, resetY);
         Ball initialBall = new NormalBall(resetX, resetY, 10, ballSpeed, ballTexture);
         this.ball = initialBall;
-        initialBall.setActive(false); // Chờ phóng
+        initialBall.setActive(false);
         ballManager.addBall(initialBall);
     }
 
     public void render() {
         ScreenUtils.clear(0, 0, 0, 1);
         float delta = Gdx.graphics.getDeltaTime();
-        launchTextTimer += delta;
 
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.pauseGame();
-            setPaused(true);
+            paused = true;
             return;
         }
 
-        // 1. Xử lý Input
         handleInput();
 
-        // 2. Cập nhật (Update) các hệ thống
-        paddle.update(delta);
+        paddle1.update(delta);
+        paddle2.update(delta);
 
-        // BallManager cập nhật TẤT CẢ bóng và va chạm (gạch, paddle, tường, mất mạng)
-        ballManager.update(delta, paddle, brickManager, scoreSystem, livesSystem);
+        // Update bóng và kiểm tra va chạm với CẢ HAI paddle
+        ballManager.update(delta, paddle1, paddle2, brickManager, scoreSystem, livesSystem);
 
-        // BrickManager cập nhật vật phẩm rơi và va chạm (với paddle)
-        brickManager.update(delta, paddle, livesSystem, ballManager);
+        brickManager.update(delta, paddle1, livesSystem, ballManager);
+        brickManager.update(delta, paddle2, livesSystem, ballManager);
 
         scoreSystem.update(delta);
         livesSystem.update(delta);
 
-        // 3. Vẽ (Render)
         batch.begin();
         batch.draw(background, 0, 0);
-        paddle.render(batch);
-        brickManager.render(batch); // Vẽ gạch VÀ vật phẩm rơi
-        ballManager.render(batch);  // Vẽ TẤT CẢ bóng
+        paddle1.render(batch);
+        paddle2.render(batch);
+        brickManager.render(batch);
+        ballManager.render(batch);
         scoreSystem.render(batch);
         livesSystem.render(batch);
 
+
         batch.end();
 
-        // (Kiểm tra game over)
         if (livesSystem.getCurrentLives() <= 0) {
             // game.returnToMenu();
         }
     }
 
-    /**
-     * Xử lý input (ví dụ: phóng bóng)
-     */
     private void handleInput() {
-        // Phóng bóng bằng phím Space
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             ballManager.launchFirstBall();
         }
-    }
-
-    // Các Getters để BrickManager truy cập
-    public Lives getLivesSystem() {
-        return livesSystem;
-    }
-
-    public BallManager getBallManager() {
-        return ballManager;
     }
 
     public void dispose() {
         batch.dispose();
         background.dispose();
         ballManager.dispose();
-        paddle.dispose();
+        paddle1.dispose();
+        paddle2.dispose();
         brickManager.dispose();
         scoreSystem.dispose();
         livesSystem.dispose();

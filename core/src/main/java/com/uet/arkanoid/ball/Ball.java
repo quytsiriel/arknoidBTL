@@ -1,7 +1,5 @@
 package com.uet.arkanoid.ball;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -46,20 +44,11 @@ public class Ball {
         velocity.x = (float) Math.cos(angleRad) * speed;
         velocity.y = (float) Math.sin(angleRad) * speed;
         active = true;
-        waitingForLaunch = false;
-    }
-    public void handleInput() {
-        if (waitingForLaunch && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            launch(90); // góc mặc định, bạn có thể chỉnh
-            waitingForLaunch = false;
-        }
     }
 
     // Cập nhật vị trí bóng
     public void update(float delta) {
-        if (!active) {
-            return;
-        } else {
+        if (active) {
             position.x += velocity.x * delta;
             position.y += velocity.y * delta;
             updateBounds();
@@ -94,11 +83,20 @@ public class Ball {
     }
 
     public void Nay(Brick brick) {
-        if (position.y > brick.getY() + 30f || position.y < brick.getY()) {
+        if (position.y > brick.getY() + 30f || position.y  < brick.getY()) {
             velocity.y *= -1;
-        } else if (position.x <= brick.getX() || position.x >= brick.getX() + 80f) {
+        }
+        else if(position.x <= brick.getX() || position.x  >= brick.getX() + 80f) {
             velocity.x *= -1;
         }
+    }
+
+    public boolean isWaitingForLaunch() {
+        return waitingForLaunch;
+    }
+
+    public void setWaitingForLaunch(boolean waiting) {
+        this.waitingForLaunch = waiting;
     }
 
     // Reset bóng về vị trí ban đầu
@@ -106,7 +104,6 @@ public class Ball {
         position.set(x, y);
         velocity.set(0, 0);
         active = false;
-        waitingForLaunch = true;
     }
 
     // Tăng tốc độ
@@ -182,25 +179,6 @@ public class Ball {
 
     public void setTexture(Texture texture) {
         this.texture = texture;
-    }
-
-    public boolean isWaitingForLaunch() {
-        return waitingForLaunch;
-    }
-
-    public void setWaitingForLaunch(boolean waiting) {
-        this.waitingForLaunch = waiting;
-    }
-
-    public void setSize(float width, float height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    // Kiểm tra bóng có ra khỏi màn hình không
-    public boolean isOutOfBounds(float screenWidth, float screenHeight) {
-        return position.x < -radius || position.x > screenWidth + radius ||
-            position.y < -radius || position.y > screenHeight + radius;
     }
 
     // Kiem tra bong ra khoi canh duoi

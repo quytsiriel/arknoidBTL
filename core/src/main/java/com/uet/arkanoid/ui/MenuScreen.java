@@ -73,12 +73,13 @@ public class MenuScreen {
             if (button1PlayerBounds.contains(touchPos.x, touchPos.y)) {
                 sound.stopBackgroundMusic();
                 sound.playGameMusic();
-                game.startGame();
+                game.showLevelSelect(1);
             }
 
             if (button2PlayerBounds.contains(touchPos.x, touchPos.y)) {
-                // Tạm thời dùng chung
-                game.startGame();
+                sound.stopBackgroundMusic();
+                sound.playGameMusic();
+                game.showLevelSelect(2);
             }
         }
     }
