@@ -13,6 +13,8 @@ public class PaddleNormal extends Paddle {
     private float expandTimer = 0f;
     private final float NORMAL_WIDTH;
     private final float MAX_WIDTH;
+    private int leftKey;
+    private int rightKey;
 
     public PaddleNormal(float x, float y) {
         super("paddle.png");
@@ -27,14 +29,31 @@ public class PaddleNormal extends Paddle {
         this.MAX_WIDTH = desiredWidth * 1.5f; // mở rộng 1.5 lần
     }
 
+    public PaddleNormal(float x, float y, int leftKey, int rightKey) {
+        this(x, y);
+        this.leftKey = leftKey;
+        this.rightKey = rightKey;
+    }
+
     @Override
     public void update(float delta) {
-        // Di chuyển paddle
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            bounds.x -= speed * delta;
+        // Nếu có phím điều khiển được truyền vào → dùng nó
+        if (leftKey != 0 && rightKey != 0) {
+            if (Gdx.input.isKeyPressed(leftKey)) {
+                bounds.x -= speed * delta;
+            }
+            if (Gdx.input.isKeyPressed(rightKey)) {
+                bounds.x += speed * delta;
+            }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            bounds.x += speed * delta;
+        // Nếu không → mặc định: dùng phím LEFT/RIGHT
+        else {
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                bounds.x -= speed * delta;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                bounds.x += speed * delta;
+            }
         }
 
         // Giới hạn trong khung chơi
@@ -43,7 +62,7 @@ public class PaddleNormal extends Paddle {
         if (bounds.x < LEFT_WALL) bounds.x = LEFT_WALL;
         if (bounds.x + bounds.width > RIGHT_WALL) bounds.x = RIGHT_WALL - bounds.width;
 
-        // Nếu đang mở rộng — giảm thời gian và tự thu nhỏ lại
+        // Xử lý mở rộng paddle
         if (expanded) {
             expandTimer -= delta;
             if (expandTimer <= 0) {
@@ -52,6 +71,7 @@ public class PaddleNormal extends Paddle {
             }
         }
     }
+
 
     public void resetPosition() {
         bounds.x = (Gdx.graphics.getWidth() - bounds.width - 200) / 2f;

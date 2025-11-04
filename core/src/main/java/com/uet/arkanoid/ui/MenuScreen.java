@@ -77,8 +77,9 @@ public class MenuScreen {
             }
 
             if (button2PlayerBounds.contains(touchPos.x, touchPos.y)) {
-                // Tạm thời dùng chung
-                game.startGame();
+                sound.stopBackgroundMusic();
+                sound.playGameMusic();
+                game.startTwoPlayerGame();
             }
         }
     }

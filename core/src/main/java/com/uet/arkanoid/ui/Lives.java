@@ -86,8 +86,10 @@ public class Lives implements Disposable {
 
     public boolean addLife() {
         if (currentLives < maxLives) {
-            currentLives++;
-            return true;
+            if(currentLives == 3) {
+                currentLives++;
+                return true;
+            }
         }
         return false;
     }
