@@ -109,9 +109,9 @@ public class PaddleNormal extends Paddle {
         if (!expanded) {
             bounds.width = MAX_WIDTH;
             expanded = true;
-            expandTimer = 30f;
+            expandTimer = 10f;
         } else {
-            expandTimer = 30f;
+            expandTimer = 10f;
         }
 
         // tránh vượt khỏi màn hình

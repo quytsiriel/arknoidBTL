@@ -10,7 +10,7 @@ public class ExpandPaddlePowerUp extends PowerUp {
     }
 
     /**
-     * Định nghĩa logic hiệu ứng: Chỉ áp dụng nếu đối tượng nhận là 'PaddleNormal'.
+     * Hiệu ứng với paddle normal.
      */
     @Override
     public void applyEffect(Object receiver) {

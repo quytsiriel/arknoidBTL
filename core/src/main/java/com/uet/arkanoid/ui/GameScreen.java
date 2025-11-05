@@ -10,9 +10,7 @@ import com.uet.arkanoid.ball.Ball;
 import com.uet.arkanoid.ball.BallManager;
 import com.uet.arkanoid.ball.NormalBall;
 import com.uet.arkanoid.brick.BrickManager;
-import com.uet.arkanoid.paddle.Paddle;
 import com.uet.arkanoid.paddle.PaddleNormal;
-import com.uet.arkanoid.ui.PlayerStateManager;
 
 public class GameScreen {
     private final Main game;
@@ -40,7 +38,7 @@ public class GameScreen {
 
     public void startNewGame(String level) {
         background = new Texture(Gdx.files.internal("background.png"));
-
+        float ballSpeed = 500;
 
         // 1. Khởi tạo các hệ thống UI
         scoreSystem = new ScoreSystem(1080,  580);

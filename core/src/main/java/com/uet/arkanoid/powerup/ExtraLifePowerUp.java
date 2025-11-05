@@ -10,7 +10,7 @@ public class ExtraLifePowerUp extends PowerUp {
     }
 
     /**
-     * Định nghĩa logic hiệu ứng: Chỉ áp dụng nếu đối tượng nhận là 'Lives'.
+     * Hiệu ứng Lives.
      */
     @Override
     public void applyEffect(Object receiver) {

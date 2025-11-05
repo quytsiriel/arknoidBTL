@@ -10,7 +10,7 @@ public class MultiBallPowerUp extends PowerUp {
     }
 
     /**
-     * Áp dụng hiệu ứng: Gọi BallManager để nhân TẤT CẢ các bóng đang bay.
+     * ÁGọi BallManager để nhân TẤT CẢ các bóng đang bay.
      */
     @Override
     public void applyEffect(Object receiver) {

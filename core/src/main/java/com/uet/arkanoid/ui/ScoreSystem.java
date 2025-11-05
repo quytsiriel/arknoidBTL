@@ -53,19 +53,9 @@ public class ScoreSystem implements Disposable {
 
     private ArrayList<ScorePopup> scorePopups;
 
-    public static final int NORMAL_BRICK = 10;
-    public static final int HARD_BRICK = 20;
-    public static final int SPECIAL_BRICK = 50;
-    public static final int BONUS_BRICK = 100;
-
-    public static final int LEVEL_COMPLETE_BONUS = 1000;
-    public static final int LIFE_BONUS = 500;
-    public static final int PERFECT_CLEAR = 5000;
-
     /**
      * Constructor
-     * @param scoreX Vị trí x hiển thị điểm
-     * @param scoreY Vị trí y hiển thị điểm
+     * scoreX Vị trí x hiển thị điểm ,scoreY Vị trí y hiển thị điểm
      */
     public ScoreSystem(float scoreX, float scoreY) {
         this.currentScore = 0;
@@ -205,8 +195,6 @@ public class ScoreSystem implements Disposable {
 
     /**
      * Thêm điểm khi phá gạch
-     * @param brickValue Giá trị điểm của gạch
-     * @param position Vị trí gạch (để hiển thị popup)
      */
     public void addScore(int brickValue, Vector2 position) {
         long currentTime = System.currentTimeMillis();
@@ -244,28 +232,6 @@ public class ScoreSystem implements Disposable {
     }
 
     /**
-     * Overload không cần vị trí
-     */
-    public void addScore(int brickValue) {
-        addScore(brickValue, null);
-    }
-
-    /**
-     * Thêm điểm thưởng
-     */
-    public void addBonusScore(int bonusPoints, String text, Vector2 position) {
-        currentScore += bonusPoints;
-        if (currentScore > highScore) {
-            highScore = currentScore;
-        }
-
-        if (position != null && text != null) {
-            scorePopups.add(new ScorePopup(text + " +" + bonusPoints,
-                position, Color.GOLD));
-        }
-    }
-
-    /**
      * Tính hệ số nhân combo
      */
     private int getComboMultiplier() {
@@ -274,14 +240,6 @@ public class ScoreSystem implements Disposable {
         if (combo >= 5) return 3;
         if (combo >= 3) return 2;
         return 1;
-    }
-
-    /**
-     * Reset combo
-     */
-    public void resetCombo() {
-        combo = 0;
-        lastHitTime = 0;
     }
 
     public int getCurrentScore() {
@@ -306,36 +264,6 @@ public class ScoreSystem implements Disposable {
 
     public void setHighScore(int highScore) {
         this.highScore = highScore;
-    }
-
-    public void reset() {
-        currentScore = 0;
-        displayScore = 0;
-        combo = 0;
-        maxCombo = 0;
-        lastHitTime = 0;
-        scorePopups.clear();
-    }
-
-    public void setPosition(float x, float y) {
-        scorePosition.set(x, y);
-        comboPosition.set(x, y - 40);
-    }
-
-    /**
-     * Tính điểm hoàn thành màn
-     */
-    public void calculateLevelBonus(int remainingLives, boolean isPerfect, Vector2 position) {
-        addBonusScore(LEVEL_COMPLETE_BONUS, "LEVEL COMPLETE", position);
-
-        if (remainingLives > 0) {
-            addBonusScore(remainingLives * LIFE_BONUS,
-                remainingLives + " LIVES", position);
-        }
-
-        if (isPerfect) {
-            addBonusScore(PERFECT_CLEAR, "PERFECT!", position);
-        }
     }
 
     private String getFormattedScore(int score) {

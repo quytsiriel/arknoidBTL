@@ -30,7 +30,7 @@ public class Lives implements Disposable {
     public Lives(int initialLives, float x, float y) {
         this.initialLives = initialLives;
         this.currentLives = initialLives;
-        this.maxLives = initialLives + 2;
+        this.maxLives = 3;
         this.position = new Vector2(x, y);
 
         heartTexture = new Texture(Gdx.files.internal("lives.png"));
@@ -86,10 +86,8 @@ public class Lives implements Disposable {
 
     public boolean addLife() {
         if (currentLives < maxLives) {
-            if(currentLives == 3) {
                 currentLives++;
                 return true;
-            }
         }
         return false;
     }

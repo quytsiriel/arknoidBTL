@@ -7,18 +7,21 @@ import com.badlogic.gdx.math.Vector2;
 import com.uet.arkanoid.brick.Brick;
 import com.uet.arkanoid.ui.Lives;
 
+/**
+ * Đại diện cho quả bóng trong trò chơi Arkanoid, quản lý vị trí, vận tốc và va chạm cơ bản.
+ */
 public class Ball {
-    public Vector2 position;      // Vị trí của bóng
-    private Vector2 velocity;      // Vận tốc của bóng
+    public Vector2 position;
+    private Vector2 velocity;
     private float radius;          // Bán kính của bóng (cho logic game)
     private Texture texture;       // Texture hình ảnh
     private float width;           // Chiều rộng hiển thị
     private float height;          // Chiều cao hiển thị
     public float speed;           // Tốc độ cơ bản
     private boolean active;        // Trạng thái hoạt động
-    private Rectangle bounds;      // Hình chữ nhật bao quanh (cho collision)
+    /** Hình chữ nhật bao quanh (Bounding Box) dùng để kiểm tra va chạm. */
+    private Rectangle bounds;
 
-    // Constructor
     public Ball(float x, float y, float radius, float speed, Texture texture) {
         this.position = new Vector2(x, y);
         this.velocity = new Vector2(0, 0);
@@ -36,7 +39,9 @@ public class Ball {
         this(x, y, radius, speed, new Texture(texturePath));
     }
 
-    // Khởi động bóng với góc ban đầu (độ)
+    /**
+     * Khởi động bóng, đặt vận tốc ban đầu theo một góc.
+     */
     public void launch(float angleDegrees) {
         float angleRad = (float) Math.toRadians(angleDegrees);
         velocity.x = (float) Math.cos(angleRad) * speed;
@@ -44,7 +49,9 @@ public class Ball {
         active = true;
     }
 
-    // Cập nhật vị trí bóng
+    /**
+     * Cập nhật vị trí của bóng trong mỗi khung hình dựa trên vận tốc.
+     */
     public void update(float delta) {
         if (active) {
             position.x += velocity.x * delta;
@@ -58,7 +65,11 @@ public class Ball {
         bounds.setPosition(position.x - width / 2, position.y - height / 2);
     }
 
-    // Vẽ bóng
+    /**
+     * Vẽ bóng lên màn hình bằng SpriteBatch.
+     *
+     * @param batch SpriteBatch dùng để vẽ.
+     */
     public void render(SpriteBatch batch) {
         if (texture != null) {
             // Vẽ texture với tâm ở vị trí position
@@ -80,6 +91,7 @@ public class Ball {
         velocity.y = -velocity.y;
     }
 
+    // Xử lý va chạm sơ bộ với gạch (Brick)
     public void Nay(Brick brick) {
         if (position.y > brick.getY() + 30f || position.y  < brick.getY()) {
             velocity.y *= -1;
@@ -166,23 +178,4 @@ public class Ball {
         return position.y < -radius;
     }
 
-    // Kiem tra bong roi = mat mang
-    public boolean checkAndHandleLostLife(float screenWidth, float screenHeight,
-                                          Lives lives, float resetX, float resetY) {
-        // Chỉ kiểm tra khi bóng rơi xuống dưới màn hình
-        if (position.y < -radius && active) {
-            active = false;
-            boolean stillAlive = lives.loseLife();
-
-            if (stillAlive) {
-                // Reset bóng về vị trí ban đầu để chơi tiếp
-                reset(resetX, resetY);
-                return true;
-            } else {
-                // Game Over
-                return false;
-            }
-        }
-        return true;
-    }
 }
