@@ -31,14 +31,11 @@ public class GameScreen {
     private float launchTextTimer = 0f;
     private boolean paused;
     private GameOverScreen gameOverScreen;
+    float ballSpeed = 500;
 
     public GameScreen(Main game) {
         this.game = game;
         batch = new SpriteBatch();
-    }
-
-    public void setPaused(boolean paused) {
-        this.paused = paused;
     }
 
     public void startNewGame(String level) {
@@ -56,7 +53,6 @@ public class GameScreen {
 
         // 4. Khởi tạo BallManager
         Texture ballTexture = new Texture(Gdx.files.internal("ball.png"));
-        float ballSpeed = 500;
         // Vị trí reset bóng (theo Paddle)
         float resetX = paddle.getX() + paddle.getWidth() / 2;
         float resetY = paddle.getY() + paddle.getHeight() + 10; // ban kinh la 10gg
@@ -130,6 +126,29 @@ public class GameScreen {
         // Phóng bóng bằng phím Space
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             ballManager.launchFirstBall();
+        }
+    }
+    // Trạng thái pause
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+        if (paused) {
+            pauseBalls();
+        } else {
+            resumeBalls();
+        }
+    }
+
+    // Dừng toàn bộ bóng
+    private void pauseBalls() {
+        if (ball != null) {
+            ballSpeed = 0; // Tạm dừng bóng
+        }
+    }
+
+    // Tiếp tục toàn bộ bóng
+    public void resumeBalls() {
+        if (ball != null) {
+            ballSpeed = 500; // Khôi phục tốc độ trước khi pause
         }
     }
 

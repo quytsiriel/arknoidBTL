@@ -104,8 +104,7 @@ public class BrickManager {
     }
 
     /**
-     * Kiểm tra va chạm của Bóng với Gạch.
-     * ĐÃ SỬA LẠI LOGIC SINH POWERUP THEO ĐÚNG LOẠI GẠCH (4, 5, 6).
+     * Kiểm tra va chạm của Bóng với Gạch đưa về giá trị powerup;
      */
     public void checkCollision(Ball ball, ScoreSystem scoreSystem) {
         for (Brick brick : bricks) {

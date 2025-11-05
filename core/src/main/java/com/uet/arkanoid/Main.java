@@ -26,6 +26,7 @@ public class Main extends Game {
     private GameOverScreen gameOverScreen;
     private int currentMode = 1;
     private LevelSelectScreen levelSelectScreen;
+    private SoundManager soundManager;
 
 
     @Override
@@ -37,6 +38,7 @@ public class Main extends Game {
         gameScreenTwoPlayer = new GameScreenTwoPlayer(this);
         gameState = GameState.MENU;
         gameOverScreen = new GameOverScreen(this);
+        soundManager = new SoundManager();
     }
 
     @Override
@@ -58,11 +60,8 @@ public class Main extends Game {
                 levelSelectScreen.render();
                 break;
             case PAUSED:
-                if (currentMode == 1)
-                    gameScreen.render();
-                else
-                    gameScreenTwoPlayer.render();
-                pauseScreen.render();
+                    pauseScreen.render();
+                    gameScreen.setPaused(true);
                 break;
             case GAME_OVER:
                 gameOverScreen.render();
@@ -91,6 +90,7 @@ public class Main extends Game {
         gameState = GameState.PLAYING;
         if (currentMode == 1) gameScreen.setPaused(false);
         else gameScreenTwoPlayer.setPaused(false);
+        gameScreen.resumeBalls();
     }
 
     public void showGameOver(int highScore) {
